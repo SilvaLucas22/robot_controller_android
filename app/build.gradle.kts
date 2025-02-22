@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -46,17 +49,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // Timber
-    implementation(libs.timber)
-
     // ReactiveX
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
-    implementation(libs.rxrelay)
+//    implementation(libs.rxjava)
+//    implementation(libs.rxandroid)
+//    implementation(libs.rxrelay)
 
     // ReactiveX support libraries
-    implementation(libs.rxpermissions)
-    implementation(libs.rxbinding)
+//    implementation(libs.rxpermissions)
+//    implementation(libs.rxbinding)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

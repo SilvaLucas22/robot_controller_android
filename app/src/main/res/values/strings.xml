@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">robot_controller</string>
+    <string name="app_name">Robot Controller</string>
+
+    <string name="select_speed">Selecione a velocidade</string>
+    <string name="bottom_sheet_behavior" translatable="false">com.google.android.material.bottomsheet.BottomSheetBehavior</string>
+
+    <string name="network_configuration">Configurações de rede</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Salvar</string>
+
+    <string name="ip_address">Endereço IP</string>
+    <string name="udp_port">Porta UDP</string>
+
 </resources>
