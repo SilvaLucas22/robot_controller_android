@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.databinding.ActivityMainBinding
 import com.robot_controller.joystick.JoystickCommandModel
 import com.robot_controller.joystick.JoystickType.*
@@ -12,7 +13,11 @@ import com.robot_controller.joystick.JoystickView
 import com.robot_controller.networkParamsBottomSheet.NetworkParamsBottomSheet
 import kotlin.math.roundToInt
 
-class MainActivity : AppCompatActivity(), JoystickView.JoystickListener {
+class MainActivity :
+    AppCompatActivity(),
+    JoystickView.JoystickListener,
+    NetworkParamsBottomSheet.NetworkParamsBottomSheetListener
+{
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
@@ -42,7 +47,9 @@ class MainActivity : AppCompatActivity(), JoystickView.JoystickListener {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        val preferencesManager = PreferencesManager(this)
+        val viewModelFactory = MainViewModelFactory(preferencesManager)
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
     }
 
     private fun setupActionBar() {
@@ -66,8 +73,9 @@ class MainActivity : AppCompatActivity(), JoystickView.JoystickListener {
     }
 
     private fun showConfigNetworkParamsBottomSheet() {
-        val teste = NetworkParamsBottomSheet()
-        teste.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
+        val (currentIpAddress, currentUdpPort) = viewModel.getNetworkParams() ?: Pair(null, null)
+        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpAddress, currentUdpPort)
+        bottomSheet.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
     }
 
     override fun onJoystickButtonClicked(joystickCommandModel: JoystickCommandModel) {
@@ -75,6 +83,10 @@ class MainActivity : AppCompatActivity(), JoystickView.JoystickListener {
             joystickCommandModel.speed = binding.speedSlider.value.roundToInt()
 
         viewModel.sendJoystickCommand(joystickCommandModel)
+    }
+
+    override fun onSavedNetworkParams(ipAddress: String, udpPort: String) {
+        viewModel.saveNetworkParams(ipAddress, udpPort)
     }
 
 }

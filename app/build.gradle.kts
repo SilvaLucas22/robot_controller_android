@@ -50,13 +50,17 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // ReactiveX
-//    implementation(libs.rxjava)
-//    implementation(libs.rxandroid)
-//    implementation(libs.rxrelay)
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
+    implementation(libs.rxrelay)
 
     // ReactiveX support libraries
 //    implementation(libs.rxpermissions)
 //    implementation(libs.rxbinding)
+
+    // Moshi
+    implementation(libs.squareup.moshi)
+    implementation(libs.squareup.moshi.adapters)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

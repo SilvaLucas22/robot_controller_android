@@ -9,6 +9,8 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+moshiAdaptersVersion = "1.14.0"
+moshiVersion = "1.14.0"
 rxandroid = "3.0.0"
 rxbinding = "4.0.0"
 rxjava = "3.1.1"
@@ -33,6 +35,8 @@ rxbinding = { module = "com.jakewharton.rxbinding4:rxbinding", version.ref = "rx
 rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
 rxpermissions = { module = "com.github.tbruyelle:rxpermissions", version.ref = "rxpermissions" }
 rxrelay = { module = "com.jakewharton.rxrelay3:rxrelay", version.ref = "rxrelay" }
+squareup-moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshiVersion" }
+squareup-moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshiAdaptersVersion" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
