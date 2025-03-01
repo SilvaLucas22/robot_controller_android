@@ -1,10 +1,13 @@
 package com.robot_controller
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.data.repository.RobotRepository
 import com.robot_controller.joystick.JoystickCommandModel
+import com.robot_controller.utils.enums.ErrorEnum
 import com.robot_controller.utils.isValidPrivateIp
 import com.robot_controller.utils.isValidUdpPort
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -12,6 +15,9 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MainViewModel(private val preferencesManager: PreferencesManager): ViewModel() {
+
+    private val _onErrorLiveData = MutableLiveData<ErrorEnum>()
+    val onErrorLiveData: LiveData<ErrorEnum> = _onErrorLiveData
 
     private val robotRepository = RobotRepository()
     private var joystickCommandDisposable: Disposable? = null
@@ -30,16 +36,10 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
         return Pair(ipAddress, udpPort)
     }
 
-    private fun handleInvalidNetworkParams() {
-        Log.e("LOG TEST", "Invalid Network Params")
-
-
-
-    }
-
     fun sendJoystickCommand(joystickCommandModel: JoystickCommandModel) {
         val (ipAddress, udpPort) = getNetworkParams() ?: run {
-            handleInvalidNetworkParams()
+            Log.e("LOG TEST", "Invalid Network Params")
+            _onErrorLiveData.value = ErrorEnum.NETWORK_PARAMS
             return
         }
 
@@ -58,10 +58,11 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 joystickCommandDisposable?.dispose()
-
+                Log.e("LOG TEST", "Joystick command sent")
             }, {
                 joystickCommandDisposable?.dispose()
-
+                Log.e("LOG TEST", "Joystick command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
     }
 

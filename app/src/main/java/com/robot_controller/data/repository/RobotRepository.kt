@@ -11,7 +11,7 @@ class RobotRepository {
         ipAddress: String,
         udpPort: Int
     ): Completable {
-        return RobotController.sendCommand(joystickCommandModel.toJson(), ipAddress, udpPort)
+        return RobotController.sendCommand(joystickCommandModel.getCommand(), ipAddress, udpPort)
     }
 
 }

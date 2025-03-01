@@ -3,6 +3,7 @@ package com.robot_controller
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.robot_controller.data.local.PreferencesManager
@@ -31,6 +32,7 @@ class MainActivity :
         setupActionBar()
         setupSliderSpeed()
         setupJoysticks()
+        setupObservers()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,6 +78,14 @@ class MainActivity :
         val (currentIpAddress, currentUdpPort) = viewModel.getNetworkParams() ?: Pair(null, null)
         val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpAddress, currentUdpPort)
         bottomSheet.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
+    }
+
+    private fun setupObservers() {
+        viewModel.onErrorLiveData.observe(this) { error ->
+            Toast
+                .makeText(this, error.message, Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun onJoystickButtonClicked(joystickCommandModel: JoystickCommandModel) {

@@ -16,4 +16,7 @@
     <string name="udp_port_helper_text">Digite uma porta UDP entre 1 e 65535</string>
     <string name="udp_port_error_text">Porta UDP inválida</string>
 
+    <string name="network_params_error">Config rede inválida</string>
+    <string name="on_send_command_error">Erro ao enviar comando</string>
+
 </resources>
