@@ -8,7 +8,7 @@ import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.data.repository.RobotRepository
 import com.robot_controller.joystick.JoystickCommandModel
 import com.robot_controller.utils.enums.ErrorEnum
-import com.robot_controller.utils.isValidPrivateIp
+import com.robot_controller.utils.isValidIp
 import com.robot_controller.utils.isValidUdpPort
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
@@ -32,7 +32,7 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
         val ipAddress = preferencesManager.ipAddress ?: return null
         val udpPort = preferencesManager.udpPort ?: return null
 
-        if (!ipAddress.isValidPrivateIp() || !udpPort.isValidUdpPort()) return null
+        if (!ipAddress.isValidIp() || !udpPort.isValidUdpPort()) return null
         return Pair(ipAddress, udpPort)
     }
 

@@ -12,7 +12,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.robot_controller.R
 import com.robot_controller.databinding.BottomSheetNetworkParamsBinding
-import com.robot_controller.utils.isValidPrivateIp
+import com.robot_controller.utils.isValidIp
 import com.robot_controller.utils.isValidUdpPort
 
 class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
@@ -73,7 +73,7 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
         with(binding) {
             ipAddressEditText.setText(ipAddressPrefs)
             udpPortEditText.setText(udpPortPrefs)
-            saveButton.isEnabled = ipAddress.isValidPrivateIp() && udpPort.isValidUdpPort()
+            saveButton.isEnabled = ipAddress.isValidIp() && udpPort.isValidUdpPort()
         }
     }
 
@@ -89,7 +89,7 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             }
 
             val ipErrorMessage = getString(R.string.ip_address_error_text)
-            setupValidation(ipAddressEditText, ipAddressInputLayout, ipErrorMessage) { it.isValidPrivateIp() }
+            setupValidation(ipAddressEditText, ipAddressInputLayout, ipErrorMessage) { it.isValidIp() }
 
             val portErrorMessage = getString(R.string.udp_port_error_text)
             setupValidation(udpPortEditText, udpPortInputLayout, portErrorMessage) { it.isValidUdpPort() }
@@ -99,7 +99,7 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun afterTextChanged(p0: Editable?) {
-                        saveButton.isEnabled = ipAddress.isValidPrivateIp() && udpPort.isValidUdpPort()
+                        saveButton.isEnabled = ipAddress.isValidIp() && udpPort.isValidUdpPort()
                     }
                 })
             }
