@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TO DO: live video"
+            android:text="Vídeo ao vivo da câmera do robô"
             android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -48,6 +48,34 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mapEnvironmentButton"
+        style="@style/myMaterialButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/map_environment"
+        app:icon="@drawable/ic_map_environment"
+        app:layout_constraintTop_toBottomOf="@id/videoLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/whereAmIButton"
+        app:layout_constraintBottom_toTopOf="@id/selectSpeedText" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/whereAmIButton"
+        style="@style/myMaterialButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/where_am_i"
+        app:icon="@drawable/ic_where_am_i"
+        app:layout_constraintTop_toTopOf="@id/mapEnvironmentButton"
+        app:layout_constraintStart_toEndOf="@id/mapEnvironmentButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/mapEnvironmentButton" />
 
     <TextView
         android:id="@+id/selectSpeedText"
@@ -58,7 +86,7 @@
         android:textColor="@color/primary_text_color"
         android:textSize="16sp"
         android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@id/videoLayout"
+        app:layout_constraintTop_toBottomOf="@id/mapEnvironmentButton"
         app:layout_constraintBottom_toTopOf="@id/sliderLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

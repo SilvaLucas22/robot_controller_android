@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "robot_controller"
 include(":app")
+include(":opencv")

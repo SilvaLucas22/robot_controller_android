@@ -31,4 +31,16 @@
         <item name="cornerSize">16dp</item>
     </style>
 
+    <style name="myMaterialButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/primary_text_color</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeColor">@color/primary_text_color</item>
+        <item name="strokeWidth">4dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">4dp</item>
+        <item name="iconTint">@color/primary_text_color</item>
+    </style>
+
 </resources>

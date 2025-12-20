@@ -71,4 +71,7 @@ dependencies {
     // Lifecycle Process
     implementation(libs.androidx.lifecycle.process)
 
+    // OpenCV
+    implementation(project(":opencv"))
+
 }

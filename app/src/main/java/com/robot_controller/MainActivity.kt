@@ -56,7 +56,7 @@ class MainActivity :
 
     private fun setupActionBar() {
         setSupportActionBar(binding.actionBar.toolbar)
-        title = getString(R.string.app_name)
+        title = "TCC Lucas da Silva"
     }
 
     private fun setupSliderSpeed() {

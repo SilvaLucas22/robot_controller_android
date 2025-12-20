@@ -19,4 +19,7 @@
     <string name="network_params_error">Config rede inválida</string>
     <string name="on_send_command_error">Erro ao enviar comando</string>
 
+    <string name="map_environment">Mapear ambiente</string>
+    <string name="where_am_i">Onde estou?</string>
+
 </resources>
