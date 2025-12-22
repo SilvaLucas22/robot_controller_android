@@ -2,12 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     style="@style/BottomSheetDialog"
     android:background="@color/white"
     android:fitsSystemWindows="true"
-    android:paddingVertical="24dp"
-    android:paddingHorizontal="16dp"
     app:behavior_hideable="false"
     app:behavior_peekHeight="462dp"
     app:layout_behavior="@string/bottom_sheet_behavior"
@@ -23,26 +20,26 @@
         android:textAlignment="center"
         android:textColor="@color/primary_text_color"
         android:textSize="16sp"
+        app:layout_constraintVertical_bias="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ipAddressInputLayout"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/ipOrDomainInputLayout"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ipAddressInputLayout"
+        android:id="@+id/ipOrDomainInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="@string/ip_address"
-        app:helperText="@string/ip_address_helper_text"
+        android:paddingHorizontal="16dp"
+        android:hint="@string/ip_or_domain"
+        app:helperText="@string/ip_domain_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toTopOf="@id/udpPortInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintBottom_toTopOf="@id/tcpPortInputLayout" >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ipAddressEditText"
+            android:id="@+id/ipOrDomainEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -50,27 +47,24 @@
             android:textColor="@color/secondary_text_color"
             android:imeOptions="actionDone"
             android:inputType="text"
-            android:maxLength="15"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/udpPortInputLayout"
+        android:id="@+id/tcpPortInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="@string/udp_port"
-        app:helperText="@string/udp_port_helper_text"
+        android:paddingHorizontal="16dp"
+        android:hint="@string/tcp_port"
+        app:helperText="@string/tcp_port_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toTopOf="@id/cancelButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintBottom_toTopOf="@id/cancelButton" >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/udpPortEditText"
+            android:id="@+id/tcpPortEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -87,6 +81,8 @@
         android:id="@+id/cancelButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"
         android:text="@string/cancel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/saveButton"
@@ -96,7 +92,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
         android:layout_width="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
         android:layout_height="wrap_content"
         android:text="@string/save"
         android:enabled="false"

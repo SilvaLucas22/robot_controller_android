@@ -12,8 +12,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.robot_controller.R
 import com.robot_controller.databinding.BottomSheetNetworkParamsBinding
-import com.robot_controller.utils.isValidIp
-import com.robot_controller.utils.isValidUdpPort
+import com.robot_controller.utils.extensions.isValidIpOrDomain
+import com.robot_controller.utils.extensions.isValidPort
 
 class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
 
@@ -22,23 +22,23 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
         activity as NetworkParamsBottomSheetListener
     }
 
-    private val ipAddress: String
-        get() = binding.ipAddressEditText.text.toString()
-    private val udpPort: String
-        get() = binding.udpPortEditText.text.toString()
+    private val ipOrDomain: String
+        get() = binding.ipOrDomainEditText.text.toString()
+    private val tcpPort: String
+        get() = binding.tcpPortEditText.text.toString()
 
     companion object {
         const val TAG = "NETWORK_PARAMS_BOTTOM_SHEET"
-        private const val IP_ADDRESS = "IP_ADDRESS"
-        private const val UDP_PORT = "UDP_PORT"
+        private const val IP_OR_DOMAIN = "IP_OR_DOMAIN"
+        private const val TCP_PORT = "TCP_PORT"
 
         fun newInstance(
-            ipAddress: String?,
-            udpPort: String?
+            ipOrDomain: String?,
+            tcpPort: String?
         ): NetworkParamsBottomSheet {
             val args = Bundle().apply {
-                putString(IP_ADDRESS, ipAddress)
-                putString(UDP_PORT, udpPort)
+                putString(IP_OR_DOMAIN, ipOrDomain)
+                putString(TCP_PORT, tcpPort)
             }
 
             return NetworkParamsBottomSheet().apply {
@@ -59,9 +59,9 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ipAddressPrefs = arguments?.getString(IP_ADDRESS)
-        val udpPortPrefs = arguments?.getString(UDP_PORT)
-        setupView(ipAddressPrefs, udpPortPrefs)
+        val ipOrDomainPrefs = arguments?.getString(IP_OR_DOMAIN)
+        val tcpPortPrefs = arguments?.getString(TCP_PORT)
+        setupView(ipOrDomainPrefs, tcpPortPrefs)
         setupListeners()
     }
 
@@ -69,11 +69,11 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
         if (manager.findFragmentByTag(TAG) == null) super.show(manager, tag)
     }
 
-    private fun setupView(ipAddressPrefs: String?, udpPortPrefs: String?) {
+    private fun setupView(ipAddressPrefs: String?, tcpPortPrefs: String?) {
         with(binding) {
-            ipAddressEditText.setText(ipAddressPrefs)
-            udpPortEditText.setText(udpPortPrefs)
-            saveButton.isEnabled = ipAddress.isValidIp() && udpPort.isValidUdpPort()
+            ipOrDomainEditText.setText(ipAddressPrefs)
+            tcpPortEditText.setText(tcpPortPrefs)
+            saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPort.isValidPort()
         }
     }
 
@@ -84,22 +84,22 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             }
 
             saveButton.setOnClickListener {
-                listener.onSavedNetworkParams(ipAddress, udpPort)
+                listener.onSavedNetworkParams(ipOrDomain, tcpPort)
                 dismiss()
             }
 
-            val ipErrorMessage = getString(R.string.ip_address_error_text)
-            setupValidation(ipAddressEditText, ipAddressInputLayout, ipErrorMessage) { it.isValidIp() }
+            val ipErrorMessage = getString(R.string.ip_domain_error_text)
+            setupValidation(ipOrDomainEditText, ipOrDomainInputLayout, ipErrorMessage) { it.isValidIpOrDomain() }
 
-            val portErrorMessage = getString(R.string.udp_port_error_text)
-            setupValidation(udpPortEditText, udpPortInputLayout, portErrorMessage) { it.isValidUdpPort() }
+            val portErrorMessage = getString(R.string.tcp_port_error_text)
+            setupValidation(tcpPortEditText, tcpPortInputLayout, portErrorMessage) { it.isValidPort() }
 
-            listOf(ipAddressEditText, udpPortEditText).forEach { editText ->
+            listOf(ipOrDomainEditText, tcpPortEditText).forEach { editText ->
                 editText.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun afterTextChanged(p0: Editable?) {
-                        saveButton.isEnabled = ipAddress.isValidIp() && udpPort.isValidUdpPort()
+                        saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPort.isValidPort()
                     }
                 })
             }
@@ -122,7 +122,6 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
     }
 
     interface NetworkParamsBottomSheetListener {
-        fun onSavedNetworkParams(ipAddress: String, udpPort: String)
+        fun onSavedNetworkParams(ipOrDomain: String, tcpPort: String)
     }
-
 }

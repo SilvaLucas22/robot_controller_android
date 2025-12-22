@@ -8,10 +8,12 @@ import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.data.repository.RobotRepository
 import com.robot_controller.joystick.JoystickCommandModel
 import com.robot_controller.utils.enums.ErrorEnum
-import com.robot_controller.utils.isValidIp
-import com.robot_controller.utils.isValidUdpPort
+import com.robot_controller.utils.enums.RobotModule
+import com.robot_controller.utils.extensions.isValidIpOrDomain
+import com.robot_controller.utils.extensions.isValidPort
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MainViewModel(private val preferencesManager: PreferencesManager): ViewModel() {
@@ -20,24 +22,39 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     val onErrorLiveData: LiveData<ErrorEnum> = _onErrorLiveData
 
     private val robotRepository = RobotRepository()
-    private var joystickCommandDisposable: Disposable? = null
+    private val disposables = CompositeDisposable()
 
-    fun saveNetworkParams(ipAddress: String, udpPort: String) {
-        preferencesManager.ipAddress = ipAddress
-        preferencesManager.udpPort = udpPort
-        Log.e("LOG TEST", "Network Params -> IP = $ipAddress, UDP Port = $udpPort")
+    fun saveNetworkParams(ipAddressOrDomain: String, tcpPort: String) {
+        preferencesManager.ipAddressOrDomain = ipAddressOrDomain
+        preferencesManager.tcpPort = tcpPort
+        Log.e("LOG TEST", "Network Params -> IP = $ipAddressOrDomain, TCP Port = $tcpPort")
+
+        connectSocket(ipAddressOrDomain, tcpPort)
     }
 
     fun getNetworkParams(): Pair<String, String>? {
-        val ipAddress = preferencesManager.ipAddress ?: return null
-        val udpPort = preferencesManager.udpPort ?: return null
+        val ipAddress = preferencesManager.ipAddressOrDomain ?: return null
+        val tcpPort = preferencesManager.tcpPort ?: return null
 
-        if (!ipAddress.isValidIp() || !udpPort.isValidUdpPort()) return null
-        return Pair(ipAddress, udpPort)
+        if (!ipAddress.isValidIpOrDomain() || !tcpPort.isValidPort()) return null
+        return Pair(ipAddress, tcpPort)
+    }
+
+    private fun connectSocket(ipAddressOrDomain: String, tcpPort: String) {
+        robotRepository
+            .connect(ipAddressOrDomain, tcpPort.toInt())
+            .subscribe({
+                Log.e("LOG TEST", "Connected successfully to robot")
+
+            }, {
+                Log.e("LOG TEST", "Fail to connect to robot")
+                _onErrorLiveData.value = ErrorEnum.FAIL_TO_CONNECT
+            })
+            .addTo(disposables)
     }
 
     fun sendJoystickCommand(joystickCommandModel: JoystickCommandModel) {
-        val (ipAddress, udpPort) = getNetworkParams() ?: run {
+        if (!robotRepository.isConnected()) {
             Log.e("LOG TEST", "Invalid Network Params")
             _onErrorLiveData.value = ErrorEnum.NETWORK_PARAMS
             return
@@ -45,25 +62,49 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
 
         Log.e("LOG TEST", "Joystick -> " +
                 "Type = ${joystickCommandModel.joystickType}, " +
-                "Command = ${joystickCommandModel.joystickCommand}, " +
-                "Speed = ${joystickCommandModel.speed}")
-
-        joystickCommandDisposable?.dispose()
-        joystickCommandDisposable = robotRepository.moveRobot(
-            joystickCommandModel,
-            ipAddress,
-            udpPort.toInt()
+                "Command = ${joystickCommandModel.joystickCommand}"
+//                "Speed = ${joystickCommandModel.speed}"
         )
+
+        robotRepository
+            .moveRobotOrCamera(joystickCommandModel)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                joystickCommandDisposable?.dispose()
                 Log.e("LOG TEST", "Joystick command sent")
             }, {
-                joystickCommandDisposable?.dispose()
                 Log.e("LOG TEST", "Joystick command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
+            .addTo(disposables)
     }
 
+    fun sendStopCommand(module: RobotModule) {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Invalid Network Params")
+            _onErrorLiveData.value = ErrorEnum.NETWORK_PARAMS
+            return
+        }
+
+        robotRepository
+            .stopRobotOrCamera(module)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Joystick command sent")
+            }, {
+                Log.e("LOG TEST", "Joystick command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    override fun onCleared() {
+        robotRepository
+            .disconnect()
+            .subscribe()
+            .addTo(disposables)
+        disposables.clear()
+        super.onCleared()
+    }
 }

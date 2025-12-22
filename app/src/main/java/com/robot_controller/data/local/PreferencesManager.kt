@@ -4,29 +4,27 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class PreferencesManager(context: Context) {
-
     private val prefs: SharedPreferences =
         context.getSharedPreferences("ROBOT_PREFS", Context.MODE_PRIVATE)
 
     companion object {
-        private const val KEY_IP_ADDRESS = "ROBOT_IP_ADDRESS"
-        private const val KEY_UDP_PORT = "ROBOT_UDP_PORT"
+        private const val KEY_IP_DOMAIN = "ROBOT_IP_DOMAIN"
+        private const val KEY_TCP_PORT = "ROBOT_TCP_PORT"
     }
 
-    var ipAddress: String?
+    var ipAddressOrDomain: String?
         set(value) {
-            prefs.edit().putString(KEY_IP_ADDRESS, value).apply()
+            prefs.edit().putString(KEY_IP_DOMAIN, value).apply()
         }
         get() {
-            return prefs.getString(KEY_IP_ADDRESS, null)
+            return prefs.getString(KEY_IP_DOMAIN, null)
         }
 
-    var udpPort: String?
+    var tcpPort: String?
         set(value) {
-            prefs.edit().putString(KEY_UDP_PORT, value).apply()
+            prefs.edit().putString(KEY_TCP_PORT, value).apply()
         }
         get() {
-            return prefs.getString(KEY_UDP_PORT, null)
+            return prefs.getString(KEY_TCP_PORT, null)
         }
-
 }

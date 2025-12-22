@@ -8,16 +8,19 @@
     <string name="cancel">Cancelar</string>
     <string name="save">Salvar</string>
 
-    <string name="ip_address">Endereço IP</string>
-    <string name="ip_address_helper_text">Digite um endereço IP privado válido</string>
-    <string name="ip_address_error_text">Endereço IP inválido</string>
+    <string name="ip_or_domain">IP ou Domínio</string>
+    <string name="ip_domain_helper_text">Digite um IP ou Domínio válido</string>
+    <string name="ip_domain_error_text">IP ou Domínio inválido</string>
 
-    <string name="udp_port">Porta UDP</string>
-    <string name="udp_port_helper_text">Digite uma porta UDP entre 1 e 65535</string>
-    <string name="udp_port_error_text">Porta UDP inválida</string>
+    <string name="tcp_port">Porta TCP</string>
+    <string name="tcp_port_helper_text">Digite uma porta TCP entre 1 e 65535</string>
+    <string name="tcp_port_error_text">Porta TCP inválida</string>
 
     <string name="network_params_error">Config rede inválida</string>
     <string name="on_send_command_error">Erro ao enviar comando</string>
+    <string name="fail_to_connect_to_robot">Falha ao conectar ao robô</string>
+
+    <string name="stop_button">Parar</string>
 
     <string name="map_environment">Mapear ambiente</string>
     <string name="where_am_i">Onde estou?</string>

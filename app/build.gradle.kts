@@ -53,14 +53,14 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
     implementation(libs.rxrelay)
+    implementation(libs.rxkotlin)
 
     // ReactiveX support libraries
 //    implementation(libs.rxpermissions)
 //    implementation(libs.rxbinding)
 
-    // Moshi
-    implementation(libs.squareup.moshi)
-    implementation(libs.squareup.moshi.adapters)
+    // Gson
+    implementation(libs.google.gson)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

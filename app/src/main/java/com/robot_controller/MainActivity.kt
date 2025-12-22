@@ -6,20 +6,19 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.tabs.TabLayoutMediator
 import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.databinding.ActivityMainBinding
-import com.robot_controller.joystick.JoystickCommandModel
-import com.robot_controller.joystick.JoystickType.*
-import com.robot_controller.joystick.JoystickView
+import com.robot_controller.fragments.AutonomyControllerFragment
+import com.robot_controller.fragments.CameraControllerFragment
+import com.robot_controller.fragments.SystemControllerFragment
+import com.robot_controller.fragments.TractionControllerFragment
 import com.robot_controller.networkParamsBottomSheet.NetworkParamsBottomSheet
-import kotlin.math.roundToInt
 
 class MainActivity :
     AppCompatActivity(),
-    JoystickView.JoystickListener,
     NetworkParamsBottomSheet.NetworkParamsBottomSheetListener
 {
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
 
@@ -30,8 +29,7 @@ class MainActivity :
 
         setupViewModel()
         setupActionBar()
-        setupSliderSpeed()
-        setupJoysticks()
+        setupFragments()
         setupObservers()
     }
 
@@ -59,25 +57,31 @@ class MainActivity :
         title = "TCC Lucas da Silva"
     }
 
-    private fun setupSliderSpeed() {
+    private fun setupFragments() {
+        val fragmentsPageAdapter = FragmentsPageAdapter(this)
+
+        val fragmentsList =
+            listOf(
+                Pair(R.drawable.ic_car, TractionControllerFragment()),
+                Pair(R.drawable.ic_camera, CameraControllerFragment()),
+                Pair(R.drawable.ic_gps, SystemControllerFragment()),
+                Pair(R.drawable.ic_where_am_i, AutonomyControllerFragment()),
+            )
+
+        fragmentsPageAdapter.fragments.addAll(fragmentsList.map { it.second })
+
         with(binding) {
-            speedSlider.addOnChangeListener { _, value, _ ->
-                speedValue.text = value.roundToInt().toString()
+            viewPager.apply {
+                offscreenPageLimit = 2
+                currentItem = 0
+                adapter = fragmentsPageAdapter
+                isUserInputEnabled = true
             }
-        }
-    }
 
-    private fun setupJoysticks() {
-        with(binding) {
-            robotJoystick.setup(this@MainActivity, ROBOT)
-            cameraJoystick.setup(this@MainActivity, CAMERA)
+            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                tab.setIcon(fragmentsList[position].first)
+            }.attach()
         }
-    }
-
-    private fun showConfigNetworkParamsBottomSheet() {
-        val (currentIpAddress, currentUdpPort) = viewModel.getNetworkParams() ?: Pair(null, null)
-        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpAddress, currentUdpPort)
-        bottomSheet.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
     }
 
     private fun setupObservers() {
@@ -88,15 +92,13 @@ class MainActivity :
         }
     }
 
-    override fun onJoystickButtonClicked(joystickCommandModel: JoystickCommandModel) {
-        if (joystickCommandModel.joystickType == ROBOT)
-            joystickCommandModel.speed = binding.speedSlider.value.roundToInt()
-
-        viewModel.sendJoystickCommand(joystickCommandModel)
+    private fun showConfigNetworkParamsBottomSheet() {
+        val (currentIpOrDomain, currentTcpPort) = viewModel.getNetworkParams() ?: Pair(null, null)
+        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpOrDomain, currentTcpPort)
+        bottomSheet.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
     }
 
-    override fun onSavedNetworkParams(ipAddress: String, udpPort: String) {
-        viewModel.saveNetworkParams(ipAddress, udpPort)
+    override fun onSavedNetworkParams(ipOrDomain: String, tcpPort: String) {
+        viewModel.saveNetworkParams(ipOrDomain, tcpPort)
     }
-
 }
