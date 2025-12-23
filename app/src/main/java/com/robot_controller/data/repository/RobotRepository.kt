@@ -1,5 +1,6 @@
 package com.robot_controller.data.repository
 
+import android.graphics.Bitmap
 import com.robot_controller.data.RobotSocketManager
 import com.robot_controller.joystick.JoystickCommandModel
 import com.robot_controller.model.RobotCommand
@@ -7,6 +8,10 @@ import com.robot_controller.utils.enums.RobotAction
 import com.robot_controller.utils.enums.RobotModule
 import com.robot_controller.utils.extensions.toRobotCommand
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 class RobotRepository {
     fun connect(ipOrDomain: String, tcpPortCommands: Int) = RobotSocketManager.connect(ipOrDomain, tcpPortCommands)
@@ -67,6 +72,30 @@ class RobotRepository {
             action = RobotAction.STATUS.value,
         )
         return RobotSocketManager.sendCommand(cmd)
+    }
+
+    fun getVideoStream(url: String): Observable<Bitmap> {
+        return Observable.create { emitter ->
+            val client = OkHttpClient()
+            val request = Request.Builder().url(url).build()
+
+            try {
+                val response = client.newCall(request).execute()
+                val inputStream = response.body?.byteStream()
+
+                if (inputStream != null) {
+                    val reader = MjpegReader(inputStream)
+                    while (!emitter.isDisposed) {
+                        val bitmap = reader.readNextFrame()
+                        if (bitmap != null) {
+                            emitter.onNext(bitmap)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (!emitter.isDisposed) emitter.onError(e)
+            }
+        }
     }
 
     // TODO Dar um double check nesse método para ver como vem as informacoes

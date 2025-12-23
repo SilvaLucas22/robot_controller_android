@@ -1,5 +1,6 @@
 package com.robot_controller
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,12 +15,15 @@ import com.robot_controller.utils.extensions.isValidPort
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MainViewModel(private val preferencesManager: PreferencesManager): ViewModel() {
-
     private val _onErrorLiveData = MutableLiveData<ErrorEnum>()
+    private val _videoFrameLiveData = MutableLiveData<Bitmap>()
+
     val onErrorLiveData: LiveData<ErrorEnum> = _onErrorLiveData
+    val videoFrameLiveData: LiveData<Bitmap> = _videoFrameLiveData
 
     private val robotRepository = RobotRepository()
     private val disposables = CompositeDisposable()
@@ -47,6 +51,8 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     private fun connectSocket(ipAddressOrDomain: String, tcpPortCommands: String) {
         robotRepository
             .connect(ipAddressOrDomain, tcpPortCommands.toInt())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 Log.e("LOG TEST", "Connected successfully to robot")
 
@@ -154,26 +160,6 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
 
     //region STREAM module
 
-    fun startVideoStreaming() {
-        if (!robotRepository.isConnected()) {
-            Log.e("LOG TEST", "Robot offline")
-            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
-            return
-        }
-
-        robotRepository
-            .startVideoStreaming()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.e("LOG TEST", "Start video streaming command sent")
-            }, {
-                Log.e("LOG TEST", "Start video streaming command error")
-                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
-            })
-            .addTo(disposables)
-    }
-
     fun stopVideoStreaming() {
         if (!robotRepository.isConnected()) {
             Log.e("LOG TEST", "Robot offline")
@@ -190,6 +176,31 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             }, {
                 Log.e("LOG TEST", "Stop video streaming command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    fun playVideo() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        val (currentIpOrDomain, _, currentTcpPortVideo) = getNetworkParams() ?: return
+        val url = "http://$currentIpOrDomain:$currentTcpPortVideo/?action=stream"
+
+        robotRepository
+            .startVideoStreaming()
+            .andThen(robotRepository.getVideoStream(url))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = { frameAsBitmap ->
+                    _videoFrameLiveData.value = frameAsBitmap
+            }, onError = {
+                Log.e("LOG TEST", "Error on receiving video stream")
+                    _onErrorLiveData.value = ErrorEnum.VIDEO_STREAMING_ERROR
             })
             .addTo(disposables)
     }

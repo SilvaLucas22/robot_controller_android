@@ -74,4 +74,6 @@ dependencies {
     // OpenCV
     implementation(project(":opencv"))
 
+    // OkHttp
+    implementation(libs.okhttp)
 }

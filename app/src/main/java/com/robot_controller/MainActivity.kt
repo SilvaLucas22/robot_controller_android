@@ -1,10 +1,12 @@
 package com.robot_controller
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayoutMediator
 import com.robot_controller.data.local.PreferencesManager
@@ -31,6 +33,7 @@ class MainActivity :
         setupActionBar()
         setupFragments()
         setupObservers()
+        setupListeners()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -89,6 +92,20 @@ class MainActivity :
             Toast
                 .makeText(this, error.message, Toast.LENGTH_SHORT)
                 .show()
+        }
+
+        viewModel.videoFrameLiveData.observe(this) { frameAsBitmap ->
+            with(binding) {
+                if (playButton.isVisible) playButton.isVisible = false
+
+                robotVideo.setImageBitmap(frameAsBitmap)
+            }
+        }
+    }
+
+    private fun setupListeners() {
+        binding.playButton.setOnClickListener {
+            viewModel.playVideo()
         }
     }
 

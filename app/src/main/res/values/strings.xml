@@ -21,6 +21,7 @@
     <string name="on_send_command_error">Erro ao enviar comando</string>
     <string name="fail_to_connect_to_robot">Falha ao conectar ao robô</string>
     <string name="robot_offline_error">Robô offline</string>
+    <string name="video_streaming_error">Falha ao receber stream de vídeo</string>
 
     <string name="stop_button">Parar</string>
     <string name="stop_all_button">Parar tudo</string>

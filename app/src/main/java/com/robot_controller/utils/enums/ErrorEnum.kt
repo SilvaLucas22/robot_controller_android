@@ -6,7 +6,8 @@ enum class ErrorEnum {
     NETWORK_PARAMS,
     ON_SEND_COMMAND,
     FAIL_TO_CONNECT,
-    ROBOT_OFFLINE;
+    ROBOT_OFFLINE,
+    VIDEO_STREAMING_ERROR;
 
     val message: Int
         get() = when (this) {
@@ -14,5 +15,6 @@ enum class ErrorEnum {
             ON_SEND_COMMAND -> R.string.on_send_command_error
             FAIL_TO_CONNECT -> R.string.fail_to_connect_to_robot
             ROBOT_OFFLINE -> R.string.robot_offline_error
+            VIDEO_STREAMING_ERROR -> R.string.video_streaming_error
         }
 }
