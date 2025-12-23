@@ -72,7 +72,7 @@ class MainActivity :
 
         with(binding) {
             viewPager.apply {
-                offscreenPageLimit = 2
+                offscreenPageLimit = 4
                 currentItem = 0
                 adapter = fragmentsPageAdapter
                 isUserInputEnabled = true
@@ -93,12 +93,12 @@ class MainActivity :
     }
 
     private fun showConfigNetworkParamsBottomSheet() {
-        val (currentIpOrDomain, currentTcpPort) = viewModel.getNetworkParams() ?: Pair(null, null)
-        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpOrDomain, currentTcpPort)
+        val (currentIpOrDomain, currentTcpPortCommands, currentTcpPortVideo) = viewModel.getNetworkParams() ?: Triple(null, null, null)
+        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpOrDomain, currentTcpPortCommands, currentTcpPortVideo)
         bottomSheet.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
     }
 
-    override fun onSavedNetworkParams(ipOrDomain: String, tcpPort: String) {
-        viewModel.saveNetworkParams(ipOrDomain, tcpPort)
+    override fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, tcpPortVideo: String) {
+        viewModel.saveNetworkParams(ipOrDomain, tcpPortCommands, tcpPortVideo)
     }
 }

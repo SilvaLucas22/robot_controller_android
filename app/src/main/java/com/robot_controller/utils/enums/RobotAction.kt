@@ -7,5 +7,7 @@ enum class RobotAction(val value: String) {
     CENTER("center"),
     SET("set"),
     TELEMETRY("tele"),
-    STOP_ALL("stop_all")
+    STOP_ALL("stop_all"),
+    START("start"),
+    STATUS("status"),
 }

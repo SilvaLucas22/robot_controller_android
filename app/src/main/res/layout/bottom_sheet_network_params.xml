@@ -36,7 +36,7 @@
         app:helperText="@string/ip_domain_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toTopOf="@id/tcpPortInputLayout" >
+        app:layout_constraintBottom_toTopOf="@id/tcpPortCommandsInputLayout" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/ipOrDomainEditText"
@@ -52,19 +52,19 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tcpPortInputLayout"
+        android:id="@+id/tcpPortCommandsInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:paddingHorizontal="16dp"
-        android:hint="@string/tcp_port"
+        android:hint="@string/tcp_port_commands"
         app:helperText="@string/tcp_port_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toTopOf="@id/cancelButton" >
+        app:layout_constraintBottom_toTopOf="@id/tcpPortVideoInputLayout" >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tcpPortEditText"
+            android:id="@+id/tcpPortCommandsEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -73,6 +73,34 @@
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="5"
+            android:digits="0123456789"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tcpPortVideoInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:paddingHorizontal="16dp"
+        android:hint="@string/tcp_port_video"
+        app:helperText="@string/tcp_port_helper_text"
+        app:endIconDrawable="@drawable/ic_clear_text"
+        app:endIconMode="clear_text"
+        app:layout_constraintBottom_toTopOf="@id/cancelButton" >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tcpPortVideoEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textSize="16sp"
+            android:textColor="@color/secondary_text_color"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:maxLength="5"
+            android:digits="0123456789"
             />
 
     </com.google.android.material.textfield.TextInputLayout>

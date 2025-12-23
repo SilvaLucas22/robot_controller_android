@@ -10,3 +10,4 @@ fun String.isValidDomain() = NetworkValidators.DOMAIN_REGEX.matches(this)
 fun String.isValidIp() = NetworkValidators.IP_REGEX.matches(this)
 fun String.isValidIpOrDomain() = isValidIp() || isValidDomain()
 fun String.isValidPort() = NetworkValidators.PORT_REGEX.matches(this)
+fun String.isValidPanOrTilt() = this.isEmpty() || this.all { it.isDigit() }

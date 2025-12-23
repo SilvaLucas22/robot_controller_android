@@ -13,11 +13,11 @@ object RobotSocketManager {
     private val gson = Gson()
     private var outputStream: OutputStream? = null
 
-    fun connect(ipOrDomain: String, tcpPort: Int): Completable {
+    fun connect(ipOrDomain: String, tcpPortCommands: Int): Completable {
         return Completable.fromAction {
             closeConnection()
 
-            socket = Socket(ipOrDomain, tcpPort)
+            socket = Socket(ipOrDomain, tcpPortCommands)
             outputStream = socket?.getOutputStream()
         }.subscribeOn(Schedulers.io())
     }

@@ -6,27 +6,148 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.robot_controller.joystick.JoystickView
-        android:id="@+id/cameraJoystick"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/stopButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent" >
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/stopButton"
-        style="@style/myMaterialButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stop_button"
-        app:icon="@drawable/ic_stop_button"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/cameraJoystick"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/leftLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/rightLayout">
+
+            <com.robot_controller.joystick.JoystickView
+                android:id="@+id/cameraJoystick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/stopButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stopButton"
+                style="@style/myMaterialButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stop_button"
+                app:icon="@drawable/ic_stop_button"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/cameraJoystick"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/centralizeCameraButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/centralizeCameraButton"
+                style="@style/myMaterialButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/centralize_camera_button"
+                app:icon="@drawable/ic_centralize_button"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/stopButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divisor_vertical"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/leftLayout"
+            app:layout_constraintEnd_toStartOf="@id/rightLayout" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rightLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/leftLayout"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/panInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:paddingHorizontal="16dp"
+                android:hint="Pan"
+                app:helperText="@string/pan_helper_text"
+                app:endIconDrawable="@drawable/ic_clear_text"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tiltInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/panEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    android:textColor="@color/secondary_text_color"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:digits="0123456789"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tiltInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:paddingHorizontal="16dp"
+                android:hint="Tilt"
+                app:helperText="@string/tilt_helper_text"
+                app:endIconDrawable="@drawable/ic_clear_text"
+                app:endIconMode="clear_text"
+                app:layout_constraintTop_toBottomOf="@id/panInputLayout"
+                app:layout_constraintBottom_toTopOf="@id/goToButton">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiltEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    android:textColor="@color/secondary_text_color"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:digits="0123456789"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/goToButton"
+                style="@style/myMaterialButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/go_to"
+                app:icon="@drawable/ic_go_to_button"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/tiltInputLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

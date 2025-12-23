@@ -39,6 +39,8 @@ class SystemControllerFragment : Fragment() {
     }
 
     private fun setupListeners() {
-
+        binding.stopAllButton.setOnClickListener {
+            viewModel.sendStopAllCommand()
+        }
     }
 }

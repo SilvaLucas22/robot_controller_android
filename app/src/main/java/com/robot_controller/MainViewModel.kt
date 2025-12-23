@@ -24,25 +24,29 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     private val robotRepository = RobotRepository()
     private val disposables = CompositeDisposable()
 
-    fun saveNetworkParams(ipAddressOrDomain: String, tcpPort: String) {
+    //region NETWORK and CONNECTION
+
+    fun saveNetworkParams(ipAddressOrDomain: String, tcpPortCommands: String, tcpPortVideo: String) {
         preferencesManager.ipAddressOrDomain = ipAddressOrDomain
-        preferencesManager.tcpPort = tcpPort
-        Log.e("LOG TEST", "Network Params -> IP = $ipAddressOrDomain, TCP Port = $tcpPort")
+        preferencesManager.tcpPortCommands = tcpPortCommands
+        preferencesManager.tcpPortVideo = tcpPortVideo
+        Log.e("LOG TEST", "Network Params -> IP = $ipAddressOrDomain, TCP Port Commands = $tcpPortCommands, TCP Port Video = $tcpPortVideo")
 
-        connectSocket(ipAddressOrDomain, tcpPort)
+        connectSocket(ipAddressOrDomain, tcpPortCommands)
     }
 
-    fun getNetworkParams(): Pair<String, String>? {
+    fun getNetworkParams(): Triple<String, String, String>? {
         val ipAddress = preferencesManager.ipAddressOrDomain ?: return null
-        val tcpPort = preferencesManager.tcpPort ?: return null
+        val tcpPortCommands = preferencesManager.tcpPortCommands ?: return null
+        val tcpPortVideo = preferencesManager.tcpPortVideo ?: return null
 
-        if (!ipAddress.isValidIpOrDomain() || !tcpPort.isValidPort()) return null
-        return Pair(ipAddress, tcpPort)
+        if (!ipAddress.isValidIpOrDomain() || !tcpPortCommands.isValidPort() || !tcpPortVideo.isValidPort()) return null
+        return Triple(ipAddress, tcpPortCommands, tcpPortVideo)
     }
 
-    private fun connectSocket(ipAddressOrDomain: String, tcpPort: String) {
+    private fun connectSocket(ipAddressOrDomain: String, tcpPortCommands: String) {
         robotRepository
-            .connect(ipAddressOrDomain, tcpPort.toInt())
+            .connect(ipAddressOrDomain, tcpPortCommands.toInt())
             .subscribe({
                 Log.e("LOG TEST", "Connected successfully to robot")
 
@@ -53,10 +57,14 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .addTo(disposables)
     }
 
+    //endregion
+
+    //region TRACTION and CAMERA modules
+
     fun sendJoystickCommand(joystickCommandModel: JoystickCommandModel) {
         if (!robotRepository.isConnected()) {
-            Log.e("LOG TEST", "Invalid Network Params")
-            _onErrorLiveData.value = ErrorEnum.NETWORK_PARAMS
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
             return
         }
 
@@ -81,8 +89,8 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
 
     fun sendStopCommand(module: RobotModule) {
         if (!robotRepository.isConnected()) {
-            Log.e("LOG TEST", "Invalid Network Params")
-            _onErrorLiveData.value = ErrorEnum.NETWORK_PARAMS
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
             return
         }
 
@@ -98,6 +106,119 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             })
             .addTo(disposables)
     }
+
+    fun centralizeCamera() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .centralizeCamera()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Centralize Camera command sent")
+            }, {
+                Log.e("LOG TEST", "Centralize Camera command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    fun goToPanTilt(pan: Int? = null, tilt: Int? = null) {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        val panValue = pan?.coerceIn(0, 180)
+        val tiltValue = tilt?.coerceIn(45, 135)
+
+        robotRepository
+            .goToPanTilt(pan = panValue, tilt = tiltValue)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Pan/Tilt command sent")
+            }, {
+                Log.e("LOG TEST", "Pan/Tilt command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    //endregion
+
+    //region STREAM module
+
+    fun startVideoStreaming() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .startVideoStreaming()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Start video streaming command sent")
+            }, {
+                Log.e("LOG TEST", "Start video streaming command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    fun stopVideoStreaming() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .stopVideoStreaming()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Stop video streaming command sent")
+            }, {
+                Log.e("LOG TEST", "Stop video streaming command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    //endregion
+
+    //region SYSTEM module
+
+    fun sendStopAllCommand() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .stopAll()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Stop all command sent")
+            }, {
+                Log.e("LOG TEST", "Stop all command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    //endregion
 
     override fun onCleared() {
         robotRepository

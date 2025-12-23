@@ -12,17 +12,29 @@
     <string name="ip_domain_helper_text">Digite um IP ou Domínio válido</string>
     <string name="ip_domain_error_text">IP ou Domínio inválido</string>
 
-    <string name="tcp_port">Porta TCP</string>
+    <string name="tcp_port_commands">Porta TCP para comandos</string>
+    <string name="tcp_port_video">Porta TCP para vídeo</string>
     <string name="tcp_port_helper_text">Digite uma porta TCP entre 1 e 65535</string>
     <string name="tcp_port_error_text">Porta TCP inválida</string>
 
     <string name="network_params_error">Config rede inválida</string>
     <string name="on_send_command_error">Erro ao enviar comando</string>
     <string name="fail_to_connect_to_robot">Falha ao conectar ao robô</string>
+    <string name="robot_offline_error">Robô offline</string>
 
     <string name="stop_button">Parar</string>
+    <string name="stop_all_button">Parar tudo</string>
+    <string name="centralize_camera_button">Centralizar</string>
+    <string name="telemetry_button">Telemetria</string>
 
     <string name="map_environment">Mapear ambiente</string>
     <string name="where_am_i">Onde estou?</string>
+
+    <string name="pan_helper_text">0 a 180 graus</string>
+    <string name="tilt_helper_text">45 a 135 graus</string>
+    <string name="go_to">Ir para</string>
+
+    <string name="no_value">Sem valor, clique para atualizar</string>
+    <string name="invalid_value">Valor inválido</string>
 
 </resources>

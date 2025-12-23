@@ -24,21 +24,26 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
 
     private val ipOrDomain: String
         get() = binding.ipOrDomainEditText.text.toString()
-    private val tcpPort: String
-        get() = binding.tcpPortEditText.text.toString()
+    private val tcpPortCommands: String
+        get() = binding.tcpPortCommandsEditText.text.toString()
+    private val tcpPortVideo: String
+        get() = binding.tcpPortVideoEditText.text.toString()
 
     companion object {
         const val TAG = "NETWORK_PARAMS_BOTTOM_SHEET"
         private const val IP_OR_DOMAIN = "IP_OR_DOMAIN"
-        private const val TCP_PORT = "TCP_PORT"
+        private const val TCP_PORT_COMMANDS = "TCP_PORT_COMMANDS"
+        private const val TCP_PORT_VIDEO = "TCP_PORT_VIDEO"
 
         fun newInstance(
             ipOrDomain: String?,
-            tcpPort: String?
+            tcpPortCommands: String?,
+            tcpPortVideo: String?,
         ): NetworkParamsBottomSheet {
             val args = Bundle().apply {
                 putString(IP_OR_DOMAIN, ipOrDomain)
-                putString(TCP_PORT, tcpPort)
+                putString(TCP_PORT_COMMANDS, tcpPortCommands)
+                putString(TCP_PORT_VIDEO, tcpPortVideo)
             }
 
             return NetworkParamsBottomSheet().apply {
@@ -60,8 +65,9 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val ipOrDomainPrefs = arguments?.getString(IP_OR_DOMAIN)
-        val tcpPortPrefs = arguments?.getString(TCP_PORT)
-        setupView(ipOrDomainPrefs, tcpPortPrefs)
+        val tcpPortCommandsPrefs = arguments?.getString(TCP_PORT_COMMANDS)
+        val tcpPortVideoPrefs = arguments?.getString(TCP_PORT_VIDEO)
+        setupView(ipOrDomainPrefs, tcpPortCommandsPrefs, tcpPortVideoPrefs)
         setupListeners()
     }
 
@@ -69,11 +75,16 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
         if (manager.findFragmentByTag(TAG) == null) super.show(manager, tag)
     }
 
-    private fun setupView(ipAddressPrefs: String?, tcpPortPrefs: String?) {
+    private fun setupView(
+        ipAddressPrefs: String?,
+        tcpPortCommandsPrefs: String?,
+        tcpPortVideoPrefs: String?,
+        ) {
         with(binding) {
             ipOrDomainEditText.setText(ipAddressPrefs)
-            tcpPortEditText.setText(tcpPortPrefs)
-            saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPort.isValidPort()
+            tcpPortCommandsEditText.setText(tcpPortCommandsPrefs)
+            tcpPortVideoEditText.setText(tcpPortVideoPrefs)
+            saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && tcpPortVideo.isValidPort()
         }
     }
 
@@ -84,7 +95,7 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             }
 
             saveButton.setOnClickListener {
-                listener.onSavedNetworkParams(ipOrDomain, tcpPort)
+                listener.onSavedNetworkParams(ipOrDomain, tcpPortCommands, tcpPortVideo)
                 dismiss()
             }
 
@@ -92,14 +103,15 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             setupValidation(ipOrDomainEditText, ipOrDomainInputLayout, ipErrorMessage) { it.isValidIpOrDomain() }
 
             val portErrorMessage = getString(R.string.tcp_port_error_text)
-            setupValidation(tcpPortEditText, tcpPortInputLayout, portErrorMessage) { it.isValidPort() }
+            setupValidation(tcpPortCommandsEditText, tcpPortCommandsInputLayout, portErrorMessage) { it.isValidPort() }
+            setupValidation(tcpPortVideoEditText, tcpPortVideoInputLayout, portErrorMessage) { it.isValidPort() }
 
-            listOf(ipOrDomainEditText, tcpPortEditText).forEach { editText ->
+            listOf(ipOrDomainEditText, tcpPortCommandsEditText, tcpPortVideoEditText).forEach { editText ->
                 editText.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun afterTextChanged(p0: Editable?) {
-                        saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPort.isValidPort()
+                        saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && tcpPortVideo.isValidPort()
                     }
                 })
             }
@@ -122,6 +134,6 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
     }
 
     interface NetworkParamsBottomSheetListener {
-        fun onSavedNetworkParams(ipOrDomain: String, tcpPort: String)
+        fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, tcpPortVideo: String)
     }
 }
