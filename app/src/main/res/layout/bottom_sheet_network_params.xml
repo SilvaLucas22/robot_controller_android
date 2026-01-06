@@ -5,11 +5,9 @@
     style="@style/BottomSheetDialog"
     android:background="@color/white"
     android:fitsSystemWindows="true"
-    app:behavior_hideable="false"
-    app:behavior_peekHeight="462dp"
     app:layout_behavior="@string/bottom_sheet_behavior"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/bottomSheetTitle"
@@ -20,7 +18,6 @@
         android:textAlignment="center"
         android:textColor="@color/primary_text_color"
         android:textSize="16sp"
-        app:layout_constraintVertical_bias="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,12 +27,12 @@
         android:id="@+id/ipOrDomainInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:paddingHorizontal="16dp"
         android:hint="@string/ip_or_domain"
         app:helperText="@string/ip_domain_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
+        app:layout_constraintTop_toBottomOf="@id/bottomSheetTitle"
         app:layout_constraintBottom_toTopOf="@id/tcpPortCommandsInputLayout" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -55,12 +52,13 @@
         android:id="@+id/tcpPortCommandsInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
         android:hint="@string/tcp_port_commands"
         app:helperText="@string/tcp_port_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
+        app:layout_constraintTop_toBottomOf="@id/ipOrDomainInputLayout"
         app:layout_constraintBottom_toTopOf="@id/tcpPortVideoInputLayout" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -82,12 +80,13 @@
         android:id="@+id/tcpPortVideoInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
         android:hint="@string/tcp_port_video"
         app:helperText="@string/tcp_port_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
+        app:layout_constraintTop_toBottomOf="@id/tcpPortCommandsInputLayout"
         app:layout_constraintBottom_toTopOf="@id/cancelButton" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -109,11 +108,13 @@
         android:id="@+id/cancelButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="24dp"
         android:text="@string/cancel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/saveButton"
+        app:layout_constraintTop_toBottomOf="@id/tcpPortVideoInputLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 
@@ -121,13 +122,13 @@
         android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="24dp"
         android:layout_height="wrap_content"
         android:text="@string/save"
         android:enabled="false"
         app:layout_constraintStart_toEndOf="@id/cancelButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cancelButton"
+        app:layout_constraintBottom_toBottomOf="@id/cancelButton"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

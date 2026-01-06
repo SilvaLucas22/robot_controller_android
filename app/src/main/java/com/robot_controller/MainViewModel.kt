@@ -17,13 +17,18 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class MainViewModel(private val preferencesManager: PreferencesManager): ViewModel() {
     private val _onErrorLiveData = MutableLiveData<ErrorEnum>()
     private val _videoFrameLiveData = MutableLiveData<Bitmap>()
+    private val _videoPlayingLiveData = MutableLiveData<Boolean>()
+    private val _compassValueLiveData = MutableLiveData<Double>()
 
     val onErrorLiveData: LiveData<ErrorEnum> = _onErrorLiveData
     val videoFrameLiveData: LiveData<Bitmap> = _videoFrameLiveData
+    val videoPlayingLiveData: LiveData<Boolean> = _videoPlayingLiveData
+    val compassValueLiveData: LiveData<Double> = _compassValueLiveData
 
     private val robotRepository = RobotRepository()
     private val disposables = CompositeDisposable()
@@ -172,6 +177,7 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                _videoPlayingLiveData.value = false
                 Log.e("LOG TEST", "Stop video streaming command sent")
             }, {
                 Log.e("LOG TEST", "Stop video streaming command error")
@@ -190,18 +196,24 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
         val (currentIpOrDomain, _, currentTcpPortVideo) = getNetworkParams() ?: return
         val url = "http://$currentIpOrDomain:$currentTcpPortVideo/?action=stream"
 
+        _videoPlayingLiveData.value = true
+
         robotRepository
             .startVideoStreaming()
+            .delay(200, TimeUnit.MILLISECONDS)
             .andThen(robotRepository.getVideoStream(url))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = { frameAsBitmap ->
                     _videoFrameLiveData.value = frameAsBitmap
-            }, onError = {
-                Log.e("LOG TEST", "Error on receiving video stream")
+                },
+                onError = {
+                    Log.e("LOG TEST", "Error on receiving video stream")
                     _onErrorLiveData.value = ErrorEnum.VIDEO_STREAMING_ERROR
-            })
+                    _videoPlayingLiveData.value = false
+                }
+            )
             .addTo(disposables)
     }
 
@@ -221,9 +233,57 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                _videoPlayingLiveData.value = false
                 Log.e("LOG TEST", "Stop all command sent")
             }, {
                 Log.e("LOG TEST", "Stop all command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    fun getTelemetry() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .getTelemetry()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ telemetryResponse ->
+                Log.e("LOG TEST", "Get telemetry value = $telemetryResponse")
+            }, {
+                Log.e("LOG TEST", "Get telemetry command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    //endregion
+
+    //region COMPASS module
+
+    fun getCompassValue() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .readCompass()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ compassResponse ->
+                Log.e("LOG TEST", "Read compass value = $compassResponse")
+                if (compassResponse.ok == 1) {
+                    _compassValueLiveData.value = compassResponse.degrees
+                }
+            }, {
+                Log.e("LOG TEST", "Read compass command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)

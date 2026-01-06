@@ -35,12 +35,27 @@ class SystemControllerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupObservers()
         setupListeners()
+    }
+
+    private fun setupObservers() {
+        viewModel.compassValueLiveData.observe(viewLifecycleOwner) { compassValue ->
+            binding.compassValue.text = compassValue.toString()
+        }
     }
 
     private fun setupListeners() {
         binding.stopAllButton.setOnClickListener {
             viewModel.sendStopAllCommand()
+        }
+
+        binding.stopVideoButton.setOnClickListener {
+            viewModel.stopVideoStreaming()
+        }
+
+        binding.compassButton.setOnClickListener {
+            viewModel.getCompassValue()
         }
     }
 }

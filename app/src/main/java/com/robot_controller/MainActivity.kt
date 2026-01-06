@@ -109,11 +109,11 @@ class MainActivity :
         }
 
         viewModel.videoFrameLiveData.observe(this) { frameAsBitmap ->
-            with(binding) {
-                if (playButton.isVisible) playButton.isVisible = false
+            binding.robotVideo.setImageBitmap(frameAsBitmap)
+        }
 
-                robotVideo.setImageBitmap(frameAsBitmap)
-            }
+        viewModel.videoPlayingLiveData.observe(this) { isPlaying ->
+            binding.playButton.isVisible = !isPlaying
         }
     }
 

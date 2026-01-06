@@ -1,7 +1,10 @@
 package com.robot_controller.data.repository
 
 import android.graphics.Bitmap
+import com.google.gson.Gson
 import com.robot_controller.data.RobotSocketManager
+import com.robot_controller.data.reponses.CompassResponse
+import com.robot_controller.data.reponses.TelemetryResponse
 import com.robot_controller.joystick.JoystickCommandModel
 import com.robot_controller.model.RobotCommand
 import com.robot_controller.utils.enums.RobotAction
@@ -9,6 +12,7 @@ import com.robot_controller.utils.enums.RobotModule
 import com.robot_controller.utils.extensions.toRobotCommand
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -98,13 +102,29 @@ class RobotRepository {
         }
     }
 
-    // TODO Dar um double check nesse método para ver como vem as informacoes
-    fun getTelemetry(): Completable {
+    fun getTelemetry(): Single<TelemetryResponse> {
         val cmd = RobotCommand(
             module = RobotModule.SYSTEM.value,
             action = RobotAction.TELEMETRY.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendAndReceive(cmd)
+            .map { response ->
+                Gson().fromJson(response, TelemetryResponse::class.java)
+            }
+    }
+
+    fun readCompass(): Single<CompassResponse> {
+        val cmd = RobotCommand(
+            module = RobotModule.COMPASS.value,
+            action = RobotAction.READ.value,
+        )
+
+        return RobotSocketManager
+            .sendAndReceive(cmd)
+            .map { response ->
+                Gson().fromJson(response, CompassResponse::class.java)
+            }
     }
 
     fun stopAll(): Completable {

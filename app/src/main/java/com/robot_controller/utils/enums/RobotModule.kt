@@ -4,5 +4,6 @@ enum class RobotModule(val value: String) {
     TRACTION("tra"),
     CAMERA("cam"),
     STREAM("stream"),
-    SYSTEM("sys")
+    SYSTEM("sys"),
+    COMPASS("compass")
 }
