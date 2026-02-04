@@ -1,4 +1,4 @@
-package com.robot_controller
+package com.robot_controller.mainView
 
 import android.graphics.Color
 import android.os.Bundle
@@ -12,13 +12,14 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayoutMediator
+import com.robot_controller.R
 import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.databinding.ActivityMainBinding
-import com.robot_controller.fragments.AutonomyControllerFragment
-import com.robot_controller.fragments.CameraControllerFragment
-import com.robot_controller.fragments.SystemControllerFragment
-import com.robot_controller.fragments.TractionControllerFragment
-import com.robot_controller.networkParamsBottomSheet.NetworkParamsBottomSheet
+import com.robot_controller.mainView.fragments.AutonomyControllerFragment
+import com.robot_controller.mainView.fragments.CameraControllerFragment
+import com.robot_controller.mainView.fragments.SystemControllerFragment
+import com.robot_controller.mainView.fragments.TractionControllerFragment
+import com.robot_controller.utils.bottomSheets.NetworkParamsBottomSheet
 
 class MainActivity :
     AppCompatActivity(),
@@ -115,6 +116,12 @@ class MainActivity :
         viewModel.videoPlayingLiveData.observe(this) { isPlaying ->
             binding.playButton.isVisible = !isPlaying
         }
+
+        viewModel.autonomyFeedbackLiveData.observe(this) { feedbackText ->
+            Toast
+                .makeText(this, feedbackText, Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     private fun setupListeners() {
@@ -122,6 +129,8 @@ class MainActivity :
             viewModel.playVideo()
         }
     }
+
+    //region Config Network Params Bottom Sheet
 
     private fun showConfigNetworkParamsBottomSheet() {
         val (currentIpOrDomain, currentTcpPortCommands, currentTcpPortVideo) = viewModel.getNetworkParams() ?: Triple(null, null, null)
@@ -132,4 +141,6 @@ class MainActivity :
     override fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, tcpPortVideo: String) {
         viewModel.saveNetworkParams(ipOrDomain, tcpPortCommands, tcpPortVideo)
     }
+
+    //endregion
 }

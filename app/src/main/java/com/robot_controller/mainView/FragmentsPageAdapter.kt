@@ -1,4 +1,4 @@
-package com.robot_controller
+package com.robot_controller.mainView
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

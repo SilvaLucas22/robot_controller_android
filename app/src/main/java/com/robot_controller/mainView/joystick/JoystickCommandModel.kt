@@ -1,6 +1,4 @@
-package com.robot_controller.joystick
-
-import org.json.JSONArray
+package com.robot_controller.mainView.joystick
 
 data class JoystickCommandModel(
     val joystickType: JoystickType,

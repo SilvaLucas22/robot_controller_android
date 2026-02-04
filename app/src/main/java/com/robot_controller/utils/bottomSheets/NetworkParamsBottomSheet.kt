@@ -1,19 +1,17 @@
-package com.robot_controller.networkParamsBottomSheet
+package com.robot_controller.utils.bottomSheets
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.robot_controller.R
 import com.robot_controller.databinding.BottomSheetNetworkParamsBinding
+import com.robot_controller.utils.extensions.enableWhenAllValid
 import com.robot_controller.utils.extensions.isValidIpOrDomain
 import com.robot_controller.utils.extensions.isValidPort
+import com.robot_controller.utils.extensions.setupValidation
 
 class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
 
@@ -84,7 +82,6 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             ipOrDomainEditText.setText(ipAddressPrefs)
             tcpPortCommandsEditText.setText(tcpPortCommandsPrefs)
             tcpPortVideoEditText.setText(tcpPortVideoPrefs)
-            saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && tcpPortVideo.isValidPort()
         }
     }
 
@@ -100,37 +97,17 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             }
 
             val ipErrorMessage = getString(R.string.ip_domain_error_text)
-            setupValidation(ipOrDomainEditText, ipOrDomainInputLayout, ipErrorMessage) { it.isValidIpOrDomain() }
+            ipOrDomainEditText.setupValidation(ipOrDomainInputLayout, ipErrorMessage) { it.isValidIpOrDomain() }
 
             val portErrorMessage = getString(R.string.tcp_port_error_text)
-            setupValidation(tcpPortCommandsEditText, tcpPortCommandsInputLayout, portErrorMessage) { it.isValidPort() }
-            setupValidation(tcpPortVideoEditText, tcpPortVideoInputLayout, portErrorMessage) { it.isValidPort() }
+            tcpPortCommandsEditText.setupValidation(tcpPortCommandsInputLayout, portErrorMessage) { it.isValidPort() }
+            tcpPortVideoEditText.setupValidation(tcpPortVideoInputLayout, portErrorMessage) { it.isValidPort() }
 
-            listOf(ipOrDomainEditText, tcpPortCommandsEditText, tcpPortVideoEditText).forEach { editText ->
-                editText.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                    override fun afterTextChanged(p0: Editable?) {
-                        saveButton.isEnabled = ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && tcpPortVideo.isValidPort()
-                    }
-                })
+            val editTexts = listOf(ipOrDomainEditText, tcpPortCommandsEditText, tcpPortVideoEditText)
+            saveButton.enableWhenAllValid(editTexts) {
+                ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && tcpPortVideo.isValidPort()
             }
         }
-    }
-
-    private fun setupValidation(
-        editText: TextInputEditText,
-        textInputLayout: TextInputLayout,
-        errorMessage: String,
-        validationRule: (String) -> Boolean
-    ) {
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun afterTextChanged(p0: Editable?) {
-                textInputLayout.error = if (validationRule(p0.toString())) null else errorMessage
-            }
-        })
     }
 
     interface NetworkParamsBottomSheetListener {

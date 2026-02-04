@@ -13,10 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App"
-        tools:targetApi="31"
+        android:name=".RobotController"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".MainActivity"
+            android:name=".mainView.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:exported="true">

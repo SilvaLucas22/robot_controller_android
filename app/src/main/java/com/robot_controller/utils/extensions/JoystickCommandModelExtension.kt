@@ -1,8 +1,8 @@
 package com.robot_controller.utils.extensions
 
-import com.robot_controller.joystick.JoystickCommandModel
-import com.robot_controller.joystick.JoystickType
-import com.robot_controller.model.RobotCommand
+import com.robot_controller.mainView.joystick.JoystickCommandModel
+import com.robot_controller.mainView.joystick.JoystickType
+import com.robot_controller.data.RobotCommand
 import com.robot_controller.utils.enums.RobotAction
 import com.robot_controller.utils.enums.RobotModule
 

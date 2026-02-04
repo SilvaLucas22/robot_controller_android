@@ -1,18 +1,21 @@
-package com.robot_controller
+package com.robot_controller.mainView
 
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.robot_controller.autonomy.AutonomyHelper
 import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.data.repository.RobotRepository
-import com.robot_controller.joystick.JoystickCommandModel
+import com.robot_controller.mainView.joystick.JoystickCommandModel
+import com.robot_controller.utils.enums.Angle
 import com.robot_controller.utils.enums.ErrorEnum
 import com.robot_controller.utils.enums.RobotModule
 import com.robot_controller.utils.extensions.isValidIpOrDomain
 import com.robot_controller.utils.extensions.isValidPort
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -24,11 +27,13 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     private val _videoFrameLiveData = MutableLiveData<Bitmap>()
     private val _videoPlayingLiveData = MutableLiveData<Boolean>()
     private val _compassValueLiveData = MutableLiveData<Double>()
+    private val _autonomyFeedbackLiveData = MutableLiveData<String>()
 
     val onErrorLiveData: LiveData<ErrorEnum> = _onErrorLiveData
     val videoFrameLiveData: LiveData<Bitmap> = _videoFrameLiveData
     val videoPlayingLiveData: LiveData<Boolean> = _videoPlayingLiveData
     val compassValueLiveData: LiveData<Double> = _compassValueLiveData
+    val autonomyFeedbackLiveData: LiveData<String> = _autonomyFeedbackLiveData
 
     private val robotRepository = RobotRepository()
     private val disposables = CompositeDisposable()
@@ -288,6 +293,55 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             })
             .addTo(disposables)
     }
+
+    //endregion
+
+    //region Autonomy region
+
+    fun mapEnvironmentFromGallery(
+        envName: String,
+        north: Bitmap,
+        east: Bitmap,
+        south: Bitmap,
+        west: Bitmap
+    ) {
+        val useCase = AutonomyHelper.mapEnvironmentUseCase
+
+        val items = listOf(
+            Angle.NORTH to north,
+            Angle.EAST to east,
+            Angle.SOUTH to south,
+            Angle.WEST to west
+        )
+
+        Completable
+            .concat(items.map { (angle, bmp) -> useCase.execute(envName, angle, bmp).ignoreElement() })
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _autonomyFeedbackLiveData.value = "Ambiente \"$envName\" mapeado!"
+                listOf(north, east, south, west).forEach { it.recycle() }
+            }, { err ->
+                _autonomyFeedbackLiveData.value = "Erro ao mapear: ${err.message}"
+                listOf(north, east, south, west).forEach { it.recycle() }
+            })
+            .addTo(disposables)
+    }
+
+    fun locateFromGallery(north: Bitmap, east: Bitmap, south: Bitmap, west: Bitmap) {
+        AutonomyHelper
+            .locateEnvironmentUseCase
+            .execute(north, east, south, west)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ result ->
+                _autonomyFeedbackLiveData.value = "Provável ambiente: ${result.environmentName}"
+            }, { err ->
+                _autonomyFeedbackLiveData.value = "Erro ao localizar: ${err.message}"
+            })
+            .addTo(disposables)
+    }
+
 
     //endregion
 

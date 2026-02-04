@@ -40,4 +40,8 @@
     <string name="no_value">Sem valor, clique para atualizar</string>
     <string name="invalid_value">Valor inválido</string>
 
+    <string name="environment_name">Nome do ambiente</string>
+    <string name="environment_name_error_text">Nome inválido</string>
+    <string name="environment_name_helper_text">O nome não pode ser vazio</string>
+
 </resources>

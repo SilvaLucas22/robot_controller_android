@@ -10,5 +10,7 @@ enum class RobotAction(val value: String) {
     STOP_ALL("stop_all"),
     START("start"),
     STATUS("status"),
-    READ("read")
+    READ("read"),
+    LQI("lqi"),
+    SCAN("scan"),
 }

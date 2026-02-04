@@ -1,4 +1,4 @@
-package com.robot_controller.joystick
+package com.robot_controller.mainView.joystick
 
 enum class JoystickCommand(val robotDirection: String, val cameraDirection: String) {
     UP("w", "t-"),

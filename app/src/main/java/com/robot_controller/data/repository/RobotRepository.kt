@@ -5,15 +5,14 @@ import com.google.gson.Gson
 import com.robot_controller.data.RobotSocketManager
 import com.robot_controller.data.reponses.CompassResponse
 import com.robot_controller.data.reponses.TelemetryResponse
-import com.robot_controller.joystick.JoystickCommandModel
-import com.robot_controller.model.RobotCommand
+import com.robot_controller.mainView.joystick.JoystickCommandModel
+import com.robot_controller.data.RobotCommand
 import com.robot_controller.utils.enums.RobotAction
 import com.robot_controller.utils.enums.RobotModule
 import com.robot_controller.utils.extensions.toRobotCommand
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 

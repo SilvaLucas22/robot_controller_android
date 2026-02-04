@@ -1,4 +1,4 @@
-package com.robot_controller.joystick
+package com.robot_controller.mainView.joystick
 
 import com.robot_controller.R
 

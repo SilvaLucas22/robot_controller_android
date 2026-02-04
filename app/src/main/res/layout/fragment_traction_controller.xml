@@ -65,7 +65,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.robot_controller.joystick.JoystickView
+        <com.robot_controller.mainView.joystick.JoystickView
             android:id="@+id/robotJoystick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.robot_controller.model
+package com.robot_controller.data
 
 import com.google.gson.annotations.SerializedName
 

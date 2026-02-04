@@ -1,4 +1,4 @@
-package com.robot_controller.fragments
+package com.robot_controller.mainView.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.robot_controller.MainViewModel
+import com.robot_controller.mainView.MainViewModel
 import com.robot_controller.databinding.FragmentTractionControllerBinding
-import com.robot_controller.joystick.JoystickCommandModel
-import com.robot_controller.joystick.JoystickType
-import com.robot_controller.joystick.JoystickView
+import com.robot_controller.mainView.joystick.JoystickCommandModel
+import com.robot_controller.mainView.joystick.JoystickType
+import com.robot_controller.mainView.joystick.JoystickView
 import com.robot_controller.utils.enums.RobotModule
 import kotlin.math.roundToInt
 

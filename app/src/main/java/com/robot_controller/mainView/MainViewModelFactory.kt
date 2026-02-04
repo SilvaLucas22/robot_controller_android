@@ -1,4 +1,4 @@
-package com.robot_controller
+package com.robot_controller.mainView
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

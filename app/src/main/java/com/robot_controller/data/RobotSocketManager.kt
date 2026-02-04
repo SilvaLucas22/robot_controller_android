@@ -2,7 +2,7 @@ package com.robot_controller.data
 
 import android.util.Log
 import com.google.gson.Gson
-import com.robot_controller.model.RobotCommand
+import com.robot_controller.data.RobotCommand
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
