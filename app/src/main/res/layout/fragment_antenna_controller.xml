@@ -15,46 +15,74 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/leftLayout"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="4dp"
             app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/rightLayout">
 
-            <com.robot_controller.mainView.joystick.JoystickView
-                android:id="@+id/cameraJoystick"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/antennaInfoButton"
+                style="@style/myMaterialButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/antenna_info"
+                app:icon="@drawable/ic_info"
+                android:layout_marginTop="12dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/stopButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/antennaPanValue" />
+
+            <TextView
+                android:id="@+id/antennaPanValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pan_value"
+                android:textSize="14dp"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/primary_text_color"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/antennaInfoButton"
+                app:layout_constraintBottom_toTopOf="@id/antennaTiltValue"
                 />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/stopButton"
-                style="@style/myMaterialButtonStyle"
+            <TextView
+                android:id="@+id/antennaTiltValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stop_button"
-                app:icon="@drawable/ic_stop_button"
+                android:text="@string/tilt_value"
+                android:textSize="14dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintTop_toBottomOf="@id/cameraJoystick"
+                android:textColor="@color/primary_text_color"
+                android:ellipsize="end"
+                android:maxLines="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/centralizeCameraButton" />
+                app:layout_constraintTop_toBottomOf="@id/antennaPanValue"
+                app:layout_constraintBottom_toTopOf="@id/antennaLqiValue"
+                />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/centralizeCameraButton"
-                style="@style/myMaterialButtonStyle"
+            <TextView
+                android:id="@+id/antennaLqiValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/centralize_camera_button"
-                app:icon="@drawable/ic_centralize_button"
+                android:text="@string/lqi_value"
+                android:textSize="14dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintTop_toBottomOf="@id/stopButton"
+                android:textColor="@color/primary_text_color"
+                android:ellipsize="end"
+                android:maxLines="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/antennaTiltValue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -71,7 +99,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rightLayout"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/leftLayout"
@@ -112,7 +140,7 @@
                 android:layout_marginBottom="16dp"
                 android:paddingHorizontal="16dp"
                 android:hint="Tilt"
-                app:helperText="@string/tilt_helper_text"
+                app:helperText="@string/pan_helper_text"
                 app:endIconDrawable="@drawable/ic_clear_text"
                 app:endIconMode="clear_text"
                 app:layout_constraintTop_toBottomOf="@id/panInputLayout"

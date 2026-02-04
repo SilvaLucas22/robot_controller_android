@@ -7,6 +7,8 @@ import com.robot_controller.data.reponses.CompassResponse
 import com.robot_controller.data.reponses.TelemetryResponse
 import com.robot_controller.mainView.joystick.JoystickCommandModel
 import com.robot_controller.data.RobotCommand
+import com.robot_controller.data.reponses.AntennaInfoResponse
+import com.robot_controller.data.reponses.AntennaLqiResponse
 import com.robot_controller.utils.enums.RobotAction
 import com.robot_controller.utils.enums.RobotModule
 import com.robot_controller.utils.extensions.toRobotCommand
@@ -42,7 +44,7 @@ class RobotRepository {
         return RobotSocketManager.sendCommand(cmd)
     }
 
-    fun goToPanTilt(pan: Int? = null, tilt: Int? = null): Completable {
+    fun goToCameraPanTilt(pan: Int? = null, tilt: Int? = null): Completable {
         val cmd = RobotCommand(
             module = RobotModule.CAMERA.value,
             action = RobotAction.SET.value,
@@ -132,5 +134,41 @@ class RobotRepository {
             action = RobotAction.STOP_ALL.value,
         )
         return RobotSocketManager.sendCommand(cmd)
+    }
+
+    fun goToAntennaPanTilt(pan: Int? = null, tilt: Int? = null): Completable {
+        val cmd = RobotCommand(
+            module = RobotModule.ANTENNA.value,
+            action = RobotAction.SET.value,
+            pan = pan,
+            tilt = tilt,
+        )
+        return RobotSocketManager.sendCommand(cmd)
+    }
+
+    fun readAntennaLqi(): Single<AntennaLqiResponse> {
+        val cmd = RobotCommand(
+            module = RobotModule.ANTENNA.value,
+            action = RobotAction.LQI.value,
+        )
+
+        return RobotSocketManager
+            .sendAndReceive(cmd)
+            .map { response ->
+                Gson().fromJson(response, AntennaLqiResponse::class.java)
+            }
+    }
+
+    fun getAllAntennaInfo(): Single<AntennaInfoResponse> {
+        val cmd = RobotCommand(
+            module = RobotModule.ANTENNA.value,
+            action = RobotAction.SCAN.value,
+        )
+
+        return RobotSocketManager
+            .sendAndReceive(cmd)
+            .map { response ->
+                Gson().fromJson(response, AntennaInfoResponse::class.java)
+            }
     }
 }

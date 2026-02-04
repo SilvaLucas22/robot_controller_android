@@ -44,4 +44,9 @@
     <string name="environment_name_error_text">Nome inválido</string>
     <string name="environment_name_helper_text">O nome não pode ser vazio</string>
 
+    <string name="antenna_info">Info antena</string>
+    <string name="pan_value">Pan: %d</string>
+    <string name="tilt_value">Tilt: %d</string>
+    <string name="lqi_value">LQI: %.1f</string>
+
 </resources>

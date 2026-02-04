@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.robot_controller.R
 import com.robot_controller.data.local.PreferencesManager
 import com.robot_controller.databinding.ActivityMainBinding
+import com.robot_controller.mainView.fragments.AntennaControllerFragment
 import com.robot_controller.mainView.fragments.AutonomyControllerFragment
 import com.robot_controller.mainView.fragments.CameraControllerFragment
 import com.robot_controller.mainView.fragments.SystemControllerFragment
@@ -82,6 +83,7 @@ class MainActivity :
             listOf(
                 Pair(R.drawable.ic_car, TractionControllerFragment()),
                 Pair(R.drawable.ic_camera, CameraControllerFragment()),
+                Pair(R.drawable.ic_antenna, AntennaControllerFragment()),
                 Pair(R.drawable.ic_gps, SystemControllerFragment()),
                 Pair(R.drawable.ic_where_am_i, AutonomyControllerFragment()),
             )
@@ -90,7 +92,7 @@ class MainActivity :
 
         with(binding) {
             viewPager.apply {
-                offscreenPageLimit = 4
+                offscreenPageLimit = fragmentsList.size
                 currentItem = 0
                 adapter = fragmentsPageAdapter
                 isUserInputEnabled = true

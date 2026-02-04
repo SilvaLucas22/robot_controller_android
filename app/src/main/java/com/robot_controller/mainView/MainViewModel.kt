@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.robot_controller.autonomy.AutonomyHelper
 import com.robot_controller.data.local.PreferencesManager
+import com.robot_controller.data.reponses.AntennaData
 import com.robot_controller.data.repository.RobotRepository
 import com.robot_controller.mainView.joystick.JoystickCommandModel
 import com.robot_controller.utils.enums.Angle
@@ -27,12 +28,14 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     private val _videoFrameLiveData = MutableLiveData<Bitmap>()
     private val _videoPlayingLiveData = MutableLiveData<Boolean>()
     private val _compassValueLiveData = MutableLiveData<Double>()
+    private val _antennaInfoLiveData = MutableLiveData<AntennaData>()
     private val _autonomyFeedbackLiveData = MutableLiveData<String>()
 
     val onErrorLiveData: LiveData<ErrorEnum> = _onErrorLiveData
     val videoFrameLiveData: LiveData<Bitmap> = _videoFrameLiveData
     val videoPlayingLiveData: LiveData<Boolean> = _videoPlayingLiveData
     val compassValueLiveData: LiveData<Double> = _compassValueLiveData
+    val antennaInfoLiveData: LiveData<AntennaData> = _antennaInfoLiveData
     val autonomyFeedbackLiveData: LiveData<String> = _autonomyFeedbackLiveData
 
     private val robotRepository = RobotRepository()
@@ -143,7 +146,7 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .addTo(disposables)
     }
 
-    fun goToPanTilt(pan: Int? = null, tilt: Int? = null) {
+    fun goToCameraPanTilt(pan: Int? = null, tilt: Int? = null) {
         if (!robotRepository.isConnected()) {
             Log.e("LOG TEST", "Robot offline")
             _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
@@ -154,13 +157,13 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
         val tiltValue = tilt?.coerceIn(45, 135)
 
         robotRepository
-            .goToPanTilt(pan = panValue, tilt = tiltValue)
+            .goToCameraPanTilt(pan = panValue, tilt = tiltValue)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("LOG TEST", "Pan/Tilt command sent")
+                Log.e("LOG TEST", "Camera Pan/Tilt command sent")
             }, {
-                Log.e("LOG TEST", "Pan/Tilt command error")
+                Log.e("LOG TEST", "Camera Pan/Tilt command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -289,6 +292,76 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
                 }
             }, {
                 Log.e("LOG TEST", "Read compass command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    //endregion
+
+    //region ANTENNA module
+
+    fun goToAntennaPanTilt(pan: Int? = null, tilt: Int? = null) {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        val panValue = pan?.coerceIn(0, 180)
+        val tiltValue = tilt?.coerceIn(0, 180)
+
+        robotRepository
+            .goToAntennaPanTilt(pan = panValue, tilt = tiltValue)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("LOG TEST", "Antenna Pan/Tilt command sent")
+            }, {
+                Log.e("LOG TEST", "Antenna Pan/Tilt command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    fun getAntennaLqiValue() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .readAntennaLqi()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ antennaLqiResponse ->
+                Log.e("LOG TEST", "Read antenna lqi value = $antennaLqiResponse")
+            }, {
+                Log.e("LOG TEST", "Read antenna lqi command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
+            .addTo(disposables)
+    }
+
+    fun getAllAntennaInfo() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        robotRepository
+            .getAllAntennaInfo()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ antennaInfoResponse ->
+                Log.e("LOG TEST", "Read antenna all info value = $antennaInfoResponse")
+                if (antennaInfoResponse.ok == 1) {
+                    _antennaInfoLiveData.value = antennaInfoResponse.antennaData
+                }
+            }, {
+                Log.e("LOG TEST", "Read antenna all info command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
