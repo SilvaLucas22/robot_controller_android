@@ -8,4 +8,5 @@ data class RobotCommand(
     @SerializedName("d") val direction: String? = null,
     @SerializedName("pan") val pan: Int? = null,
     @SerializedName("tilt") val tilt: Int? = null,
+    @SerializedName("v") val speed: Int? = null,
 )

@@ -67,9 +67,8 @@ class TractionControllerFragment :
     }
 
     override fun onJoystickButtonClicked(joystickCommandModel: JoystickCommandModel) {
-//        if (joystickCommandModel.joystickType == JoystickType.ROBOT)
-//            joystickCommandModel.speed = binding.speedSlider.value.roundToInt()
-        // For now, speed is not included on JSON robot protocol
+        if (joystickCommandModel.joystickType == JoystickType.ROBOT)
+            joystickCommandModel.movementSpeed = binding.speedSlider.value.roundToInt()
 
         viewModel.sendJoystickCommand(joystickCommandModel)
     }

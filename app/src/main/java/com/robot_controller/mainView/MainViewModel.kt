@@ -89,8 +89,8 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
 
         Log.e("LOG TEST", "Joystick -> " +
                 "Type = ${joystickCommandModel.joystickType}, " +
-                "Command = ${joystickCommandModel.joystickCommand}"
-//                "Speed = ${joystickCommandModel.speed}"
+                "Command = ${joystickCommandModel.joystickCommand}" +
+                "Speed = ${joystickCommandModel.movementSpeed}"
         )
 
         robotRepository

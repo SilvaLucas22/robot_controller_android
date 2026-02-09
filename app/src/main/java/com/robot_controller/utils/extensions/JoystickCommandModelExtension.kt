@@ -23,5 +23,17 @@ fun JoystickCommandModel.toRobotCommand(): RobotCommand {
             this.joystickCommand.cameraDirection
         }
 
-    return RobotCommand(module.value, action.value, direction)
+    val speed =
+        if (isJoystickTypeRobot) {
+            this.movementSpeed
+        } else {
+            null
+        }
+
+    return RobotCommand(
+        module = module.value,
+        action = action.value,
+        direction = direction,
+        speed = speed,
+    )
 }
