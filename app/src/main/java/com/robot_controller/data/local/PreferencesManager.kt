@@ -10,7 +10,7 @@ class PreferencesManager(context: Context) {
     companion object {
         private const val KEY_IP_DOMAIN = "ROBOT_IP_DOMAIN"
         private const val KEY_TCP_PORT_COMMANDS = "ROBOT_TCP_PORT_COMMANDS"
-        private const val KEY_TCP_PORT_VIDEO = "ROBOT_TCP_PORT_VIDEO"
+        private const val KEY_HTTP_PORT_VIDEO = "ROBOT_HTTP_PORT_VIDEO"
     }
 
     var ipAddressOrDomain: String?
@@ -29,11 +29,11 @@ class PreferencesManager(context: Context) {
             return prefs.getString(KEY_TCP_PORT_COMMANDS, null)
         }
 
-    var tcpPortVideo: String?
+    var httpPortVideo: String?
         set(value) {
-            prefs.edit().putString(KEY_TCP_PORT_VIDEO, value).apply()
+            prefs.edit().putString(KEY_HTTP_PORT_VIDEO, value).apply()
         }
         get() {
-            return prefs.getString(KEY_TCP_PORT_VIDEO, null)
+            return prefs.getString(KEY_HTTP_PORT_VIDEO, null)
         }
 }

@@ -1,6 +1,7 @@
 package com.robot_controller.data.repository
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.google.gson.Gson
 import com.robot_controller.data.RobotSocketManager
 import com.robot_controller.data.reponses.CompassResponse
@@ -9,6 +10,7 @@ import com.robot_controller.mainView.joystick.JoystickCommandModel
 import com.robot_controller.data.RobotCommand
 import com.robot_controller.data.reponses.AntennaInfoResponse
 import com.robot_controller.data.reponses.AntennaLqiResponse
+import com.robot_controller.data.reponses.StatusVideoStreamingResponse
 import com.robot_controller.utils.enums.RobotAction
 import com.robot_controller.utils.enums.RobotModule
 import com.robot_controller.utils.extensions.toRobotCommand
@@ -26,14 +28,18 @@ class RobotRepository {
     fun isConnected() = RobotSocketManager.isConnected()
 
     fun moveRobotOrCamera(joystickCommandModel: JoystickCommandModel): Completable =
-        RobotSocketManager.sendCommand(joystickCommandModel.toRobotCommand())
+        RobotSocketManager
+            .sendCommand(joystickCommandModel.toRobotCommand())
+            .ignoreElement()
 
     fun stopRobotOrCamera(module: RobotModule): Completable {
         val cmd = RobotCommand(
             module = module.value,
             action = RobotAction.STOP.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
     fun centralizeCamera(): Completable {
@@ -41,7 +47,9 @@ class RobotRepository {
             module = RobotModule.CAMERA.value,
             action = RobotAction.CENTER.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
     fun goToCameraPanTilt(pan: Int? = null, tilt: Int? = null): Completable {
@@ -51,7 +59,9 @@ class RobotRepository {
             pan = pan,
             tilt = tilt,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
     fun startVideoStreaming(): Completable {
@@ -59,7 +69,9 @@ class RobotRepository {
             module = RobotModule.STREAM.value,
             action = RobotAction.START.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
     fun stopVideoStreaming(): Completable {
@@ -67,16 +79,22 @@ class RobotRepository {
             module = RobotModule.STREAM.value,
             action = RobotAction.STOP.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
-    // TODO Dar um double check nesse método para ver como vem o status
-    fun getStatusVideoStreaming(): Completable {
+    fun getStatusVideoStreaming(): Single<StatusVideoStreamingResponse> {
         val cmd = RobotCommand(
             module = RobotModule.STREAM.value,
             action = RobotAction.STATUS.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .map { response ->
+                Gson().fromJson(response, StatusVideoStreamingResponse::class.java)
+            }
     }
 
     fun getVideoStream(url: String): Observable<Bitmap> {
@@ -87,6 +105,8 @@ class RobotRepository {
             try {
                 val response = client.newCall(request).execute()
                 val inputStream = response.body?.byteStream()
+
+                Log.e("LOG TEST", "Http connection -> $response")
 
                 if (inputStream != null) {
                     val reader = MjpegReader(inputStream)
@@ -109,7 +129,7 @@ class RobotRepository {
             action = RobotAction.TELEMETRY.value,
         )
         return RobotSocketManager
-            .sendAndReceive(cmd)
+            .sendCommand(cmd)
             .map { response ->
                 Gson().fromJson(response, TelemetryResponse::class.java)
             }
@@ -122,7 +142,7 @@ class RobotRepository {
         )
 
         return RobotSocketManager
-            .sendAndReceive(cmd)
+            .sendCommand(cmd)
             .map { response ->
                 Gson().fromJson(response, CompassResponse::class.java)
             }
@@ -133,7 +153,9 @@ class RobotRepository {
             module = RobotModule.SYSTEM.value,
             action = RobotAction.STOP_ALL.value,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
     fun goToAntennaPanTilt(pan: Int? = null, tilt: Int? = null): Completable {
@@ -143,7 +165,9 @@ class RobotRepository {
             pan = pan,
             tilt = tilt,
         )
-        return RobotSocketManager.sendCommand(cmd)
+        return RobotSocketManager
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 
     fun readAntennaLqi(): Single<AntennaLqiResponse> {
@@ -153,22 +177,20 @@ class RobotRepository {
         )
 
         return RobotSocketManager
-            .sendAndReceive(cmd)
+            .sendCommand(cmd)
             .map { response ->
                 Gson().fromJson(response, AntennaLqiResponse::class.java)
             }
     }
 
-    fun getAllAntennaInfo(): Single<AntennaInfoResponse> {
+    fun getAllAntennaInfo(): Completable {
         val cmd = RobotCommand(
             module = RobotModule.ANTENNA.value,
             action = RobotAction.SCAN.value,
         )
 
         return RobotSocketManager
-            .sendAndReceive(cmd)
-            .map { response ->
-                Gson().fromJson(response, AntennaInfoResponse::class.java)
-            }
+            .sendCommand(cmd)
+            .ignoreElement()
     }
 }

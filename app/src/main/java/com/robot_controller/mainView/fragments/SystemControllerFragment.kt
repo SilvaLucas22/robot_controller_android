@@ -56,6 +56,8 @@ class SystemControllerFragment : Fragment() {
 
         binding.compassButton.setOnClickListener {
             viewModel.getCompassValue()
+//            viewModel.getTelemetry()
+//            viewModel.getStatusVideoStreaming()
         }
     }
 }

@@ -24,8 +24,8 @@ data class CameraData(
 )
 
 data class AntennaData(
-    @SerializedName("pan") val pan: Int,
-    @SerializedName("tilt") val tilt: Int,
+    @SerializedName("pan") val pan: Int = -1,
+    @SerializedName("tilt") val tilt: Int = -1,
     @SerializedName("lqi") val lqi: Double? = null,
 )
 

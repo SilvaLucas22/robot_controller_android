@@ -43,11 +43,11 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
 
     //region NETWORK and CONNECTION
 
-    fun saveNetworkParams(ipAddressOrDomain: String, tcpPortCommands: String, tcpPortVideo: String) {
+    fun saveNetworkParams(ipAddressOrDomain: String, tcpPortCommands: String, httpPortVideo: String) {
         preferencesManager.ipAddressOrDomain = ipAddressOrDomain
         preferencesManager.tcpPortCommands = tcpPortCommands
-        preferencesManager.tcpPortVideo = tcpPortVideo
-        Log.e("LOG TEST", "Network Params -> IP = $ipAddressOrDomain, TCP Port Commands = $tcpPortCommands, TCP Port Video = $tcpPortVideo")
+        preferencesManager.httpPortVideo = httpPortVideo
+        Log.e("LOG TEST", "Network Params -> IP = $ipAddressOrDomain, TCP Port Commands = $tcpPortCommands, HTTP Port Video = $httpPortVideo")
 
         connectSocket(ipAddressOrDomain, tcpPortCommands)
     }
@@ -55,10 +55,10 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     fun getNetworkParams(): Triple<String, String, String>? {
         val ipAddress = preferencesManager.ipAddressOrDomain ?: return null
         val tcpPortCommands = preferencesManager.tcpPortCommands ?: return null
-        val tcpPortVideo = preferencesManager.tcpPortVideo ?: return null
+        val httpPortVideo = preferencesManager.httpPortVideo ?: return null
 
-        if (!ipAddress.isValidIpOrDomain() || !tcpPortCommands.isValidPort() || !tcpPortVideo.isValidPort()) return null
-        return Triple(ipAddress, tcpPortCommands, tcpPortVideo)
+        if (!ipAddress.isValidIpOrDomain() || !tcpPortCommands.isValidPort() || !httpPortVideo.isValidPort()) return null
+        return Triple(ipAddress, tcpPortCommands, httpPortVideo)
     }
 
     private fun connectSocket(ipAddressOrDomain: String, tcpPortCommands: String) {
@@ -87,20 +87,20 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             return
         }
 
-        Log.e("LOG TEST", "Joystick -> " +
-                "Type = ${joystickCommandModel.joystickType}, " +
-                "Command = ${joystickCommandModel.joystickCommand}" +
-                "Speed = ${joystickCommandModel.movementSpeed}"
-        )
+//        Log.e("LOG TEST", "Joystick -> " +
+//                "Type = ${joystickCommandModel.joystickType}, " +
+//                "Command = ${joystickCommandModel.joystickCommand}" +
+//                "Speed = ${joystickCommandModel.movementSpeed}"
+//        )
 
         robotRepository
             .moveRobotOrCamera(joystickCommandModel)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("LOG TEST", "Joystick command sent")
+//                Log.e("LOG TEST", "Joystick command sent")
             }, {
-                Log.e("LOG TEST", "Joystick command error")
+//                Log.e("LOG TEST", "Joystick command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -118,9 +118,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("LOG TEST", "Joystick command sent")
+//                Log.e("LOG TEST", "Joystick command sent")
             }, {
-                Log.e("LOG TEST", "Joystick command error")
+//                Log.e("LOG TEST", "Joystick command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -138,9 +138,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("LOG TEST", "Centralize Camera command sent")
+//                Log.e("LOG TEST", "Centralize Camera command sent")
             }, {
-                Log.e("LOG TEST", "Centralize Camera command error")
+//                Log.e("LOG TEST", "Centralize Camera command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -161,9 +161,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("LOG TEST", "Camera Pan/Tilt command sent")
+//                Log.e("LOG TEST", "Camera Pan/Tilt command sent")
             }, {
-                Log.e("LOG TEST", "Camera Pan/Tilt command error")
+//                Log.e("LOG TEST", "Camera Pan/Tilt command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -186,9 +186,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _videoPlayingLiveData.value = false
-                Log.e("LOG TEST", "Stop video streaming command sent")
+//                Log.e("LOG TEST", "Stop video streaming command sent")
             }, {
-                Log.e("LOG TEST", "Stop video streaming command error")
+//                Log.e("LOG TEST", "Stop video streaming command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -201,14 +201,14 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             return
         }
 
-        val (currentIpOrDomain, _, currentTcpPortVideo) = getNetworkParams() ?: return
-        val url = "http://$currentIpOrDomain:$currentTcpPortVideo/?action=stream"
+        val (currentIpOrDomain, _, currentHttpPortVideo) = getNetworkParams() ?: return
+        val url = "http://$currentIpOrDomain:$currentHttpPortVideo/?action=stream"
 
         _videoPlayingLiveData.value = true
 
         robotRepository
             .startVideoStreaming()
-            .delay(200, TimeUnit.MILLISECONDS)
+            .delay(2000, TimeUnit.MILLISECONDS)
             .andThen(robotRepository.getVideoStream(url))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -217,11 +217,37 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
                     _videoFrameLiveData.value = frameAsBitmap
                 },
                 onError = {
-                    Log.e("LOG TEST", "Error on receiving video stream")
+//                    Log.e("LOG TEST", "Error on receiving video stream")
                     _onErrorLiveData.value = ErrorEnum.VIDEO_STREAMING_ERROR
                     _videoPlayingLiveData.value = false
                 }
             )
+            .addTo(disposables)
+    }
+
+    fun getStatusVideoStreaming() {
+        if (!robotRepository.isConnected()) {
+            Log.e("LOG TEST", "Robot offline")
+            _onErrorLiveData.value = ErrorEnum.ROBOT_OFFLINE
+            return
+        }
+
+        if (_videoPlayingLiveData.value != true) {
+            Log.e("LOG TEST", "Não está reproduzindo vídeo do robô agora.")
+            _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            return
+        }
+
+        robotRepository
+            .getStatusVideoStreaming()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            }, {
+//                Log.e("LOG TEST", "Status video streaming command error")
+                _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
+            })
             .addTo(disposables)
     }
 
@@ -242,9 +268,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _videoPlayingLiveData.value = false
-                Log.e("LOG TEST", "Stop all command sent")
+//                Log.e("LOG TEST", "Stop all command sent")
             }, {
-                Log.e("LOG TEST", "Stop all command error")
+//                Log.e("LOG TEST", "Stop all command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -262,9 +288,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ telemetryResponse ->
-                Log.e("LOG TEST", "Get telemetry value = $telemetryResponse")
+//                Log.e("LOG TEST", "Get telemetry value = $telemetryResponse")
             }, {
-                Log.e("LOG TEST", "Get telemetry command error")
+//                Log.e("LOG TEST", "Get telemetry command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -286,12 +312,12 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ compassResponse ->
-                Log.e("LOG TEST", "Read compass value = $compassResponse")
+//                Log.e("LOG TEST", "Read compass value = $compassResponse")
                 if (compassResponse.ok == 1) {
                     _compassValueLiveData.value = compassResponse.degrees
                 }
             }, {
-                Log.e("LOG TEST", "Read compass command error")
+//                Log.e("LOG TEST", "Read compass command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -316,9 +342,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("LOG TEST", "Antenna Pan/Tilt command sent")
+//                Log.e("LOG TEST", "Antenna Pan/Tilt command sent")
             }, {
-                Log.e("LOG TEST", "Antenna Pan/Tilt command error")
+//                Log.e("LOG TEST", "Antenna Pan/Tilt command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -336,9 +362,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ antennaLqiResponse ->
-                Log.e("LOG TEST", "Read antenna lqi value = $antennaLqiResponse")
+//                Log.e("LOG TEST", "Read antenna lqi value = $antennaLqiResponse")
             }, {
-                Log.e("LOG TEST", "Read antenna lqi command error")
+//                Log.e("LOG TEST", "Read antenna lqi command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -355,13 +381,13 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .getAllAntennaInfo()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ antennaInfoResponse ->
-                Log.e("LOG TEST", "Read antenna all info value = $antennaInfoResponse")
-                if (antennaInfoResponse.ok == 1) {
-                    _antennaInfoLiveData.value = antennaInfoResponse.antennaData
-                }
+            .subscribe({
+//                Log.e("LOG TEST", "Read antenna all info value = $antennaInfoResponse")
+//                if (antennaInfoResponse.ok == 1) {
+//                    _antennaInfoLiveData.value = antennaInfoResponse.antennaData
+//                }
             }, {
-                Log.e("LOG TEST", "Read antenna all info command error")
+//                Log.e("LOG TEST", "Read antenna all info command error")
                 _onErrorLiveData.value = ErrorEnum.ON_SEND_COMMAND
             })
             .addTo(disposables)
@@ -421,6 +447,8 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
     override fun onCleared() {
         robotRepository
             .disconnect()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
             .addTo(disposables)
         disposables.clear()

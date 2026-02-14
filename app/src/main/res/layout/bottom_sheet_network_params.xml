@@ -55,11 +55,11 @@
         android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
         android:hint="@string/tcp_port_commands"
-        app:helperText="@string/tcp_port_helper_text"
+        app:helperText="@string/port_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
         app:layout_constraintTop_toBottomOf="@id/ipOrDomainInputLayout"
-        app:layout_constraintBottom_toTopOf="@id/tcpPortVideoInputLayout" >
+        app:layout_constraintBottom_toTopOf="@id/httpPortVideoInputLayout" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tcpPortCommandsEditText"
@@ -77,20 +77,20 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tcpPortVideoInputLayout"
+        android:id="@+id/httpPortVideoInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
-        android:hint="@string/tcp_port_video"
-        app:helperText="@string/tcp_port_helper_text"
+        android:hint="@string/http_port_video"
+        app:helperText="@string/port_helper_text"
         app:endIconDrawable="@drawable/ic_clear_text"
         app:endIconMode="clear_text"
         app:layout_constraintTop_toBottomOf="@id/tcpPortCommandsInputLayout"
         app:layout_constraintBottom_toTopOf="@id/cancelButton" >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tcpPortVideoEditText"
+            android:id="@+id/httpPortVideoEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -114,7 +114,7 @@
         android:text="@string/cancel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/saveButton"
-        app:layout_constraintTop_toBottomOf="@id/tcpPortVideoInputLayout"
+        app:layout_constraintTop_toBottomOf="@id/httpPortVideoInputLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

@@ -13,9 +13,9 @@
     <string name="ip_domain_error_text">IP ou Domínio inválido</string>
 
     <string name="tcp_port_commands">Porta TCP para comandos</string>
-    <string name="tcp_port_video">Porta TCP para vídeo</string>
-    <string name="tcp_port_helper_text">Digite uma porta TCP entre 1 e 65535</string>
-    <string name="tcp_port_error_text">Porta TCP inválida</string>
+    <string name="http_port_video">Porta HTTP para vídeo</string>
+    <string name="port_helper_text">Digite uma porta entre 1 e 65535</string>
+    <string name="port_error_text">Porta inválida</string>
 
     <string name="network_params_error">Config rede inválida</string>
     <string name="on_send_command_error">Erro ao enviar comando</string>

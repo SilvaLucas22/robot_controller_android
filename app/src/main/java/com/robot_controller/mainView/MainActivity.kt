@@ -135,13 +135,13 @@ class MainActivity :
     //region Config Network Params Bottom Sheet
 
     private fun showConfigNetworkParamsBottomSheet() {
-        val (currentIpOrDomain, currentTcpPortCommands, currentTcpPortVideo) = viewModel.getNetworkParams() ?: Triple(null, null, null)
-        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpOrDomain, currentTcpPortCommands, currentTcpPortVideo)
+        val (currentIpOrDomain, currentTcpPortCommands, currentHttpPortVideo) = viewModel.getNetworkParams() ?: Triple(null, null, null)
+        val bottomSheet = NetworkParamsBottomSheet.newInstance(currentIpOrDomain, currentTcpPortCommands, currentHttpPortVideo)
         bottomSheet.show(supportFragmentManager, NetworkParamsBottomSheet.TAG)
     }
 
-    override fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, tcpPortVideo: String) {
-        viewModel.saveNetworkParams(ipOrDomain, tcpPortCommands, tcpPortVideo)
+    override fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, httpPortVideo: String) {
+        viewModel.saveNetworkParams(ipOrDomain, tcpPortCommands, httpPortVideo)
     }
 
     //endregion

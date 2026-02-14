@@ -24,24 +24,24 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
         get() = binding.ipOrDomainEditText.text.toString()
     private val tcpPortCommands: String
         get() = binding.tcpPortCommandsEditText.text.toString()
-    private val tcpPortVideo: String
-        get() = binding.tcpPortVideoEditText.text.toString()
+    private val httpPortVideo: String
+        get() = binding.httpPortVideoEditText.text.toString()
 
     companion object {
         const val TAG = "NETWORK_PARAMS_BOTTOM_SHEET"
         private const val IP_OR_DOMAIN = "IP_OR_DOMAIN"
         private const val TCP_PORT_COMMANDS = "TCP_PORT_COMMANDS"
-        private const val TCP_PORT_VIDEO = "TCP_PORT_VIDEO"
+        private const val HTTP_PORT_VIDEO = "HTTP_PORT_VIDEO"
 
         fun newInstance(
             ipOrDomain: String?,
             tcpPortCommands: String?,
-            tcpPortVideo: String?,
+            httpPortVideo: String?,
         ): NetworkParamsBottomSheet {
             val args = Bundle().apply {
                 putString(IP_OR_DOMAIN, ipOrDomain)
                 putString(TCP_PORT_COMMANDS, tcpPortCommands)
-                putString(TCP_PORT_VIDEO, tcpPortVideo)
+                putString(HTTP_PORT_VIDEO, httpPortVideo)
             }
 
             return NetworkParamsBottomSheet().apply {
@@ -64,8 +64,8 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
 
         val ipOrDomainPrefs = arguments?.getString(IP_OR_DOMAIN)
         val tcpPortCommandsPrefs = arguments?.getString(TCP_PORT_COMMANDS)
-        val tcpPortVideoPrefs = arguments?.getString(TCP_PORT_VIDEO)
-        setupView(ipOrDomainPrefs, tcpPortCommandsPrefs, tcpPortVideoPrefs)
+        val httpPortVideoPrefs = arguments?.getString(HTTP_PORT_VIDEO)
+        setupView(ipOrDomainPrefs, tcpPortCommandsPrefs, httpPortVideoPrefs)
         setupListeners()
     }
 
@@ -76,12 +76,12 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
     private fun setupView(
         ipAddressPrefs: String?,
         tcpPortCommandsPrefs: String?,
-        tcpPortVideoPrefs: String?,
+        httpPortVideoPrefs: String?,
         ) {
         with(binding) {
             ipOrDomainEditText.setText(ipAddressPrefs)
             tcpPortCommandsEditText.setText(tcpPortCommandsPrefs)
-            tcpPortVideoEditText.setText(tcpPortVideoPrefs)
+            httpPortVideoEditText.setText(httpPortVideoPrefs)
         }
     }
 
@@ -92,25 +92,25 @@ class NetworkParamsBottomSheet: BottomSheetDialogFragment() {
             }
 
             saveButton.setOnClickListener {
-                listener.onSavedNetworkParams(ipOrDomain, tcpPortCommands, tcpPortVideo)
+                listener.onSavedNetworkParams(ipOrDomain, tcpPortCommands, httpPortVideo)
                 dismiss()
             }
 
             val ipErrorMessage = getString(R.string.ip_domain_error_text)
             ipOrDomainEditText.setupValidation(ipOrDomainInputLayout, ipErrorMessage) { it.isValidIpOrDomain() }
 
-            val portErrorMessage = getString(R.string.tcp_port_error_text)
+            val portErrorMessage = getString(R.string.port_error_text)
             tcpPortCommandsEditText.setupValidation(tcpPortCommandsInputLayout, portErrorMessage) { it.isValidPort() }
-            tcpPortVideoEditText.setupValidation(tcpPortVideoInputLayout, portErrorMessage) { it.isValidPort() }
+            httpPortVideoEditText.setupValidation(httpPortVideoInputLayout, portErrorMessage) { it.isValidPort() }
 
-            val editTexts = listOf(ipOrDomainEditText, tcpPortCommandsEditText, tcpPortVideoEditText)
+            val editTexts = listOf(ipOrDomainEditText, tcpPortCommandsEditText, httpPortVideoEditText)
             saveButton.enableWhenAllValid(editTexts) {
-                ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && tcpPortVideo.isValidPort()
+                ipOrDomain.isValidIpOrDomain() && tcpPortCommands.isValidPort() && httpPortVideo.isValidPort()
             }
         }
     }
 
     interface NetworkParamsBottomSheetListener {
-        fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, tcpPortVideo: String)
+        fun onSavedNetworkParams(ipOrDomain: String, tcpPortCommands: String, httpPortVideo: String)
     }
 }

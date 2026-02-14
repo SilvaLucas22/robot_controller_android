@@ -2,10 +2,8 @@ package com.robot_controller.data
 
 import android.util.Log
 import com.google.gson.Gson
-import com.robot_controller.data.RobotCommand
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.OutputStream
 import java.net.Socket
 
@@ -20,13 +18,13 @@ object RobotSocketManager {
 
             socket = Socket(ipOrDomain, tcpPortCommands)
             outputStream = socket?.getOutputStream()
-        }.subscribeOn(Schedulers.io())
+        }
     }
 
     fun disconnect(): Completable {
         return Completable.fromAction {
             closeConnection()
-        }.subscribeOn(Schedulers.io())
+        }
     }
 
     private fun closeConnection() {
@@ -43,16 +41,7 @@ object RobotSocketManager {
 
     fun isConnected(): Boolean = socket?.isConnected == true && socket?.isClosed == false
 
-    fun sendCommand(command: RobotCommand): Completable {
-        return Completable.fromAction {
-            val json = gson.toJson(command) + "\n"
-            Log.e("LOG TEST", "RobotController -> sendCommand = $json")
-            outputStream?.write(json.toByteArray())
-            outputStream?.flush()
-        }
-    }
-
-    fun sendAndReceive(command: RobotCommand): Single<String> {
+    fun sendCommand(command: RobotCommand): Single<String> {
         return Single.create { emitter ->
             try {
                 val json = gson.toJson(command) + "\n"

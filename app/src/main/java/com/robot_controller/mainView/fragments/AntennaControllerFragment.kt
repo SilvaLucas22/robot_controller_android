@@ -73,6 +73,7 @@ class AntennaControllerFragment :
         with(binding) {
             antennaInfoButton.setOnClickListener {
                 viewModel.getAllAntennaInfo()
+//                viewModel.getAntennaLqiValue()
             }
 
             goToButton.setOnClickListener {
