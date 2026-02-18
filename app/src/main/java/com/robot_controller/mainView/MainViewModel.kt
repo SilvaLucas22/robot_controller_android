@@ -434,7 +434,9 @@ class MainViewModel(private val preferencesManager: PreferencesManager): ViewMod
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result ->
-                _autonomyFeedbackLiveData.value = "Provável ambiente: ${result.environmentName}"
+                val environmentFeedback = "Provável ambiente: ${result.environmentName}"
+                Log.e("LOG TEST", environmentFeedback)
+                _autonomyFeedbackLiveData.value = environmentFeedback
             }, { err ->
                 _autonomyFeedbackLiveData.value = "Erro ao localizar: ${err.message}"
             })
